@@ -1,0 +1,15 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+
+  engineType             = "client"
+  runtime                = "nodejs"
+  moduleFormat           = "cjs"
+  generatedFileExtension = "js"
+  importFileExtension    = "js"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
