@@ -76,7 +76,6 @@ model User {
   updatedAt           DateTime     @updatedAt
 
   teams        Team[]    @relation("TeamMembers")
-  createdTeams Team[]    @relation("TeamCreator")
   tasks        Task[]
   projects     Project[] @relation("ManagedProjects")
 }
@@ -87,9 +86,6 @@ model Team {
   companyId Int
   company   Company @relation(fields: [companyId], references: [id])
 
-  createdBy Int
-  creator   User @relation("TeamCreator", fields: [createdBy], references: [id])
-
   members  User[]    @relation("TeamMembers")
   projects Project[]
 }
@@ -99,11 +95,11 @@ model Project {
   name        String
   description String?
 
-  managerId Int
+  managerId   Int
   manager   User @relation("ManagedProjects", fields: [managerId], references: [id])
 
-  teamId Int
-  team   Team @relation(fields: [teamId], references: [id])
+  teamId      Int
+  team        Team @relation(fields: [teamId], references: [id])
 
   tasks     Task[]
   createdAt DateTime @default(now())

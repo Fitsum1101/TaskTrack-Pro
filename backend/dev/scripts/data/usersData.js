@@ -1,33 +1,27 @@
 // dev/scripts/data/usersData.js
 module.exports = [
-    {
-      username: "superadmin",
-      password: "superadmin123",
-      roleName: "Super Admin",
-      employeeID: "EMP0000",
-      isActive: true,
-  
-    },
-    {
-      username: "admin",
-      password: "admin123",
-      roleName: "Admin",
-      employeeID: "EMP0001",
-      isActive: true,
-      customPermissions: ["employee_create", "employee_update"]
-    },
-    {
-      username: "manager",
-      password: "manager123",
-      roleName: "Manager",
-      employeeID: "EMP0002",
-      isActive: true,
-    },
-    {
-      username: "janesmith",
-      password: "employee123",
-      roleName: "Employee",
-      employeeID: "EMP0003",
-      isActive: true,
-    },
-  ];
+  {
+    name: "Alice Admin",
+    email: "admin@acme.com",
+    password: "admin123",
+    role: "ADMIN",
+    status: "ACTIVE",
+    companyIndex: 0, // Acme Corporation
+  },
+  {
+    name: "Peter Manager",
+    email: "manager@acme.com",
+    password: "manager123",
+    role: "PROJECT_MANAGER",
+    status: "ACTIVE",
+    companyIndex: 0,
+  },
+  {
+    name: "Eve Employee",
+    email: "employee@acme.com",
+    password: null, // invited user
+    role: "TEAM_MEMBER",
+    status: "PENDING",
+    companyIndex: 0,
+  },
+];
