@@ -13,3 +13,111 @@ datasource db {
   provider = "mysql"
 }
 
+// Roles for company users
+enum Role {
+  ADMIN
+  PROJECT_MANAGER
+  TEAM_MEMBER
+}
+
+// Status for company approval
+enum CompanyStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum UserStatus {
+  PENDING   // invited, no password yet
+  ACTIVE    // password set, can login
+  DISABLED  // fired / blocked
+}
+
+// The super admin of the system
+model SystemAdmin {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String    @unique
+  password  String
+  role      String     @default("SYSTEM_ADMIN")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+// The company using the system
+model Company {
+  id        Int           @id @default(autoincrement())
+  name      String        @unique
+  status    CompanyStatus @default(PENDING) // track approval status
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  users     User[]
+  teams     Team[]
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  name      String
+  email     String  @unique
+  password  String?
+  role      Role
+  companyId Int
+  status     UserStatus @default(PENDING)
+  
+  company   Company @relation(fields: [companyId], references: [id])
+  isActive            Boolean      @default(true)
+  lastLogin           DateTime?
+  loginAttempts       Int          @default(0)
+  lockUntil           DateTime?
+  passwordChangedAt   DateTime?
+  passwordResetToken  String?
+  passwordResetExpires DateTime?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+
+  teams        Team[]    @relation("TeamMembers")
+  createdTeams Team[]    @relation("TeamCreator")
+  tasks        Task[]
+  projects     Project[] @relation("ManagedProjects")
+}
+
+model Team {
+  id        Int     @id @default(autoincrement())
+  name      String
+  companyId Int
+  company   Company @relation(fields: [companyId], references: [id])
+
+  createdBy Int
+  creator   User @relation("TeamCreator", fields: [createdBy], references: [id])
+
+  members  User[]    @relation("TeamMembers")
+  projects Project[]
+}
+
+model Project {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  managerId Int
+  manager   User @relation("ManagedProjects", fields: [managerId], references: [id])
+
+  teamId Int
+  team   Team @relation(fields: [teamId], references: [id])
+
+  tasks     Task[]
+  createdAt DateTime @default(now())
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  status      String   @default("not started")
+  progress    Int      @default(0)
+  assignedTo  Int?
+  assignee    User?    @relation(fields: [assignedTo], references: [id])
+  projectId   Int
+  project     Project  @relation(fields: [projectId], references: [id])
+  createdAt   DateTime @default(now())
+}

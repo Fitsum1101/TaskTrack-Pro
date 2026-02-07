@@ -8,7 +8,6 @@ const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const routeIndex = require("./index");
 const { errorHandler, notFoundHandler } = require("./utils/errorHandler");
-const { i18nMiddleware } = require("./middleware/localizationMiddleware");
 
 const app = express();
 
@@ -26,7 +25,7 @@ const limiter = rateLimit({
 
 // ===== 🌐 CORS Middleware Setup =====
 const allowedOrigins = process.env.FRONTEND_URL_CORS?.split(",").map((origin) =>
-  origin.trim()
+  origin.trim(),
 );
 
 app.use(
@@ -47,7 +46,7 @@ app.use(
     //   }
     // },
     credentials: true,
-  })
+  }),
 );
 
 // ===== Middlewares =====
@@ -77,7 +76,6 @@ const allMiddlewares = [
 
 // Use middlewares for all other routes
 app.use(allMiddlewares);
-app.use(i18nMiddleware);
 
 // Public folder for static contents
 app.use(express.static(path.join(__dirname, "../public")));
@@ -85,7 +83,7 @@ app.use(express.static(path.join(__dirname, "../public")));
 // Base route or test route
 app.get("/", (_, res) => {
   res.json({
-    message: "Welcome to the icog sync API",
+    message: "Welcome to the Task_Managment sync API",
     status: "Success✅",
     server_status: `Working🆙`,
     restart_working: "true",
@@ -94,11 +92,11 @@ app.get("/", (_, res) => {
 });
 
 // API Routes
-app.use("/api/v1/permission", routeIndex.permission.permissionRoutes);
-app.use("/api/v1/role", routeIndex.role.roleRoutes);
-app.use("/api/v1/auth", routeIndex.auth.authRoutes);
-app.use("/api/v1/user", routeIndex.users.userRoutes);
-app.use("/api/v1/employee", routeIndex.employee.employeeRoutes);
+// app.use("/api/v1/permission", routeIndex.permission.permissionRoutes);
+// app.use("/api/v1/role", routeIndex.role.roleRoutes);
+// app.use("/api/v1/auth", routeIndex.auth.authRoutes);
+// app.use("/api/v1/user", routeIndex.users.userRoutes);
+// app.use("/api/v1/employee", routeIndex.employee.employeeRoutes);
 
 // Error Handling
 app.use(notFoundHandler);

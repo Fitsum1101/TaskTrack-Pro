@@ -1,8 +1,18 @@
 // src/config/db.js
-const { PrismaClient } = require("@prisma/client");
+const { PrismaClient } = require("../../generated/prisma/client");
+const { PrismaMariaDb } = require("@prisma/adapter-mariadb");
+
+const adapter = new PrismaMariaDb({
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_NAME,
+  connectionLimit: 5,
+});
 
 // Singleton pattern for PrismaClient
 const prisma = new PrismaClient({
+  adapter,
   log:
     process.env.NODE_ENV === "development"
       ? ["query", "error", "warn"]
@@ -16,7 +26,6 @@ const connectDB = async () => {
     console.log("✅ Using existing Prisma connection");
     return prisma;
   }
-
   try {
     // Test connection with a simple query
     await prisma.$queryRaw`SELECT 1`;
