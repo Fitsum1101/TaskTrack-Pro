@@ -1,7 +1,9 @@
 // dev/scripts/data/usersData.js
 module.exports = [
   {
-    name: "Alice Admin",
+    firstName: "Alice",
+    lastName: "Admin",
+    username: "alice.admin",
     email: "admin@acme.com",
     password: "admin123",
     role: "ADMIN",
@@ -9,7 +11,9 @@ module.exports = [
     companyIndex: 0, // Acme Corporation
   },
   {
-    name: "Peter Manager",
+    firstName: "Peter",
+    lastName: "Manager",
+    username: "peter.manager",
     email: "manager@acme.com",
     password: "manager123",
     role: "PROJECT_MANAGER",
@@ -17,9 +21,11 @@ module.exports = [
     companyIndex: 0,
   },
   {
-    name: "Eve Employee",
+    firstName: "Eve",
+    lastName: "Employee",
+    username: "eve.employee",
     email: "employee@acme.com",
-    password: null, // invited user
+    password: "employee123", // invited user
     role: "TEAM_MEMBER",
     status: "PENDING",
     companyIndex: 0,

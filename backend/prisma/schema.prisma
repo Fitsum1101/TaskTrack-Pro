@@ -36,7 +36,7 @@ enum UserStatus {
 // The super admin of the system
 model SystemAdmin {
   id        Int      @id @default(autoincrement())
-  name      String
+  username  String
   email     String    @unique
   password  String
   role      String     @default("SYSTEM_ADMIN")
@@ -48,17 +48,28 @@ model SystemAdmin {
 model Company {
   id        Int           @id @default(autoincrement())
   name      String        @unique
-  status    CompanyStatus @default(PENDING) // track approval status
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  status    CompanyStatus @default(PENDING)
+
+  // Contact information
+  phone     String?
+  address   String?
+  city      String?
+
+  // Relations
   users     User[]
   teams     Team[]
+
+  // Audit
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
 
 model User {
   id        Int     @id @default(autoincrement())
-  name      String
-  email     String  @unique
+  firstName String
+  lastName  String
+  username  String?  @unique
+  email     String   @unique
   password  String?
   role      Role
   companyId Int
@@ -76,6 +87,7 @@ model User {
   updatedAt           DateTime     @updatedAt
 
   teams        Team[]    @relation("TeamMembers")
+  teamMemberships TeamMember[]
   tasks        Task[]
   projects     Project[] @relation("ManagedProjects")
 }
@@ -87,7 +99,23 @@ model Team {
   company   Company @relation(fields: [companyId], references: [id])
 
   members  User[]    @relation("TeamMembers")
+  @@unique([companyId, name]) // team names must be unique within a company
+  teamMembers TeamMember[]
   projects Project[]
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+
+  teamId    Int
+  userId    Int
+
+  team      Team     @relation(fields: [teamId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  joinedAt  DateTime @default(now())
+
+  @@unique([teamId, userId]) // a user can join a team only once
 }
 
 model Project {
@@ -101,6 +129,7 @@ model Project {
   teamId      Int
   team        Team @relation(fields: [teamId], references: [id])
 
+  @@unique([teamId, name]) // project names must be unique within a team
   tasks     Task[]
   createdAt DateTime @default(now())
 }
@@ -115,5 +144,7 @@ model Task {
   assignee    User?    @relation(fields: [assignedTo], references: [id])
   projectId   Int
   project     Project  @relation(fields: [projectId], references: [id])
+
+  @@unique([projectId, title]) // task titles must be unique within a project
   createdAt   DateTime @default(now())
 }
