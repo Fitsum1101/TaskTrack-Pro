@@ -26,6 +26,8 @@
     "password_min_length": "Password must be at least 6 characters long",
     "new_password_min_length": "New password must be at least 6 characters long",
     "incorrect_credentials": "Invalid username or password",
+    "account_pending": "Account is pending approval",
+    "account_rejected": "Account has been rejected",
 
     "user_already_exists": "Username already exists",
     "role_no_account_required": "Employee role does not require a system account",

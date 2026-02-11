@@ -6,10 +6,10 @@ const { status } = require("http-status");
 /**
  * Helper: Check phone number uniqueness
  */
-const isPhoneNumberUnique = async (phoneNumber, companyId = null) => {
+const isPhoneNumberUnique = async (phone, companyId = null) => {
   const existingCompany = await prisma.company.findFirst({
     where: {
-      phoneNumber,
+      phone,
       id: companyId ? { not: companyId } : undefined,
     },
   });
@@ -33,13 +33,13 @@ const isCompanyNameUnique = async (name, companyId = null) => {
  * create company
  */
 const createCompany = async (companyData) => {
-  const { name, phoneNumber } = companyData;
+  const { name, phone } = companyData;
 
   if (!(await isCompanyNameUnique(name))) {
     throw new ApiError(status.BAD_REQUEST, "Company name already exists");
   }
 
-  if (!(await isPhoneNumberUnique(phoneNumber))) {
+  if (!(await isPhoneNumberUnique(phone))) {
     throw new ApiError(status.BAD_REQUEST, "Phone number already exists");
   }
 

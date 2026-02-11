@@ -4,6 +4,7 @@ const { status } = require("http-status");
 const { prisma } = require("../../../config/db");
 const ApiError = require("../../../utils/apiError");
 const companyService = require("../../company/services/companyService");
+const locals = require("../locales/en.json");
 
 const {
   generateTokens,
@@ -93,26 +94,27 @@ const login = async (username, password) => {
   });
 
   if (!user || !user.isActive)
-    throw new ApiError(status.FORBIDDEN, "auth.incorrect_credentials");
+    throw new ApiError(status.FORBIDDEN, locals.auth.incorrect_credentials);
 
   const match = await isPasswordMatch(user, password);
 
   //  check if the user is accepted to login or not
 
-  if (user.status === "pending") {
-    throw new ApiError(status.FORBIDDEN, "auth.account_pending");
+  if (user.status === "PENDING") {
+    throw new ApiError(status.FORBIDDEN, locals.auth.account_pending);
   }
 
-  if (user.status === "rejected") {
-    throw new ApiError(status.FORBIDDEN, "auth.account_rejected");
+  if (user.status === "REJECTED") {
+    throw new ApiError(status.FORBIDDEN, locals.auth.account_rejected);
   }
 
   if (user.lockUntil && new Date() < user.lockUntil) {
-    throw new ApiError(status.FORBIDDEN, "auth.account_locked");
+    throw new ApiError(status.FORBIDDEN, locals.auth.account_locked);
   }
+
   if (!match) {
     await incrementLoginAttempts(user);
-    throw new ApiError(status.FORBIDDEN, "auth.incorrect_credentials");
+    throw new ApiError(status.FORBIDDEN, locals.auth.incorrect_credentials);
   }
 
   await resetLoginAttempts(user);
@@ -134,7 +136,25 @@ const login = async (username, password) => {
 /**
  * Register user
  */
-const register = async (userData) => {
+const register = async (collData) => {
+  const companyData = {
+    name: collData.company,
+    address: collData.address,
+    city: collData.city,
+    // state: collData.state,
+    // zipCode: collData.zipCode,
+    phone: collData.phone,
+  };
+
+  const userData = {
+    firstName: collData.firstName,
+    lastName: collData.lastName,
+    username: collData.username,
+    email: collData.email,
+    password: collData.password,
+    role: "ADMIN",
+  };
+
   const existingUser = await prisma.user.findUnique({
     where: { username: userData.username.toLowerCase() },
   });
@@ -142,7 +162,7 @@ const register = async (userData) => {
   if (existingUser)
     throw new ApiError(status.CONFLICT, "auth.user_already_exists");
 
-  const company = await companyService.createCompany(userData.company);
+  const company = await companyService.createCompany(companyData);
 
   const hashedPassword = await bcrypt.hash(userData.password, 12);
 

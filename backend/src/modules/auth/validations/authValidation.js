@@ -1,6 +1,12 @@
 // validations/authValidation.js
 const Joi = require("joi");
-const { password, username, email, id } = require("../../../utils/customJoi");
+const {
+  password,
+  username,
+  email,
+  id,
+  phoneNumber,
+} = require("../../../utils/customJoi");
 
 const login = {
   body: Joi.object()
@@ -44,13 +50,13 @@ const register = {
       company: Joi.string().required().messages({
         "any.required": "Company is required",
       }),
-      phone: Joi.string().optional().messages({
-        "string.pattern.base": "Phone number must be a valid format",
+      phone: phoneNumber().required().messages({
+        "any.required": "Phone number is required",
       }),
-      address: Joi.string().optional(),
-      city: Joi.string().optional(),
-      state: Joi.string().optional(),
-      zipCode: Joi.string().optional(),
+      address: Joi.string().required(),
+      city: Joi.string().required(),
+      state: Joi.string().required(),
+      zipCode: Joi.string().required(),
     })
     .required(),
 };

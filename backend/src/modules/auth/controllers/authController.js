@@ -12,6 +12,9 @@ const locals = require("../locales/en.json");
  */
 const login = catchAsync(async (req, res) => {
   const { username, password } = req.body;
+
+  console.log({ username });
+
   const { accessToken, refreshToken, user } = await authService.login(
     username,
     password,
