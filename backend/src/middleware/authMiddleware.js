@@ -58,7 +58,7 @@ const authenticate = async (req, res, next) => {
     //   return next(
     //     new ApiError(
     //       StatusCodes.UNAUTHORIZED,
-    //       req.t("auth.password_changed_relogin")
+    //       locals.auth.password_changed_relogin
     //     )
     //   );
     // }

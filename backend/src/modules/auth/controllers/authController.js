@@ -1,8 +1,11 @@
+const { StatusCodes } = require("http-status-codes");
+
 const ApiResponse = require("../../../utils/apiResponse");
 const catchAsync = require("../../../utils/catchAsync");
 const ApiError = require("../../../utils/apiError");
+
 const authService = require("../services/authService");
-const { StatusCodes } = require("http-status-codes");
+const locals = require("../locales/en.json");
 
 /**
  * Login user with username and password
@@ -27,7 +30,7 @@ const login = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         { accessToken, refreshToken, user },
-        req.t("auth.login_successful"),
+        locals.auth.login_successful,
       ),
     );
 });
@@ -43,7 +46,7 @@ const register = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.CREATED,
         user,
-        "auth.user_registered_successfully",
+        locals.auth.user_registered_successfully,
       ),
     );
 });
@@ -59,9 +62,7 @@ const logout = catchAsync(async (req, res) => {
 
   return res
     .status(StatusCodes.OK)
-    .json(
-      new ApiResponse(StatusCodes.OK, null, req.t("auth.logout_successful")),
-    );
+    .json(new ApiResponse(StatusCodes.OK, null, locals.auth.logout_successful));
 });
 
 /**
@@ -73,7 +74,7 @@ const refreshTokens = catchAsync(async (req, res) => {
   if (!refreshToken)
     throw new ApiError(
       StatusCodes.UNAUTHORIZED,
-      req.t("auth.refresh_token_required"),
+      locals.auth.refresh_token_required,
     );
 
   const {
@@ -95,7 +96,7 @@ const refreshTokens = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         { accessToken: newAccessToken, user },
-        req.t("auth.tokens_refreshed"),
+        locals.auth.tokens_refreshed,
       ),
     );
 });
@@ -114,7 +115,7 @@ const forgotPassword = catchAsync(async (req, res) => {
         new ApiResponse(
           StatusCodes.OK,
           null,
-          req.t("auth.reset_instructions_sent"),
+          locals.auth.reset_instructions_sent,
         ),
       );
   } else {
@@ -124,7 +125,7 @@ const forgotPassword = catchAsync(async (req, res) => {
         new ApiResponse(
           StatusCodes.OK,
           { resetToken },
-          req.t("auth.reset_token_generated"),
+          locals.auth.reset_token_generated,
         ),
       );
   }
@@ -140,7 +141,7 @@ const resetPassword = catchAsync(async (req, res) => {
   if (!password || password.length < 6) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      req.t("auth.password_min_length"),
+      locals.auth.password_min_length,
     );
   }
 
@@ -162,7 +163,7 @@ const resetPassword = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         { accessToken, user },
-        req.t("auth.password_reset_success"),
+        locals.auth.password_reset_success,
       ),
     );
 });
@@ -177,7 +178,7 @@ const changePassword = catchAsync(async (req, res) => {
   if (!newPassword || newPassword.length < 6) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      req.t("auth.new_password_min_length"),
+      locals.auth.new_password_min_length,
     );
   }
 
@@ -200,7 +201,7 @@ const changePassword = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         { accessToken, user },
-        req.t("auth.password_changed_success"),
+        locals.auth.password_changed_success,
       ),
     );
 });
@@ -211,18 +212,15 @@ const changePassword = catchAsync(async (req, res) => {
 const verifyToken = catchAsync(async (req, res) => {
   const token = req.header("Authorization")?.replace("Bearer ", "");
   if (!token)
-    throw new ApiError(
-      StatusCodes.UNAUTHORIZED,
-      req.t("auth.no_token_provided"),
-    );
+    throw new ApiError(StatusCodes.UNAUTHORIZED, locals.auth.no_token_provided);
 
   const user = await authService.verifyToken(token);
   if (!user)
-    throw new ApiError(StatusCodes.UNAUTHORIZED, req.t("auth.invalid_token"));
+    throw new ApiError(StatusCodes.UNAUTHORIZED, locals.auth.invalid_token);
 
   return res
     .status(StatusCodes.OK)
-    .json(new ApiResponse(StatusCodes.OK, { user }, req.t("auth.token_valid")));
+    .json(new ApiResponse(StatusCodes.OK, { user }, locals.auth.token_valid));
 });
 
 /**
@@ -233,24 +231,20 @@ const verifyResetToken = catchAsync(async (req, res) => {
   if (!token)
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      req.t("auth.refresh_token_required"),
+      locals.auth.refresh_token_required,
     );
 
   const user = await authService.verifyResetToken(token);
   if (!user)
     throw new ApiError(
       StatusCodes.UNAUTHORIZED,
-      req.t("auth.invalid_reset_token"),
+      locals.auth.invalid_reset_token,
     );
 
   return res
     .status(StatusCodes.OK)
     .json(
-      new ApiResponse(
-        StatusCodes.OK,
-        { user },
-        req.t("auth.reset_token_valid"),
-      ),
+      new ApiResponse(StatusCodes.OK, { user }, locals.auth.reset_token_valid),
     );
 });
 

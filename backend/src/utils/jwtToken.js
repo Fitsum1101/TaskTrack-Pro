@@ -1,5 +1,5 @@
 // utils/jwtToken.js
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 
 /**
  * Generate an access token with security best practices
@@ -12,18 +12,18 @@ const generateAccessToken = (user) => {
     username: user.username,
     isActive: user.isActive,
     role: {
-      name:user.role.name,
+      name: user.role.name,
       id: user.role.id,
     },
-    type: 'access',
-    
+    type: "access",
+
     iat: Math.floor(Date.now() / 1000),
   };
 
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '8h',
-    audience: 'boss-grand-garment-api',
-    issuer: 'boss-grand-garment-system',
+    expiresIn: process.env.JWT_EXPIRES_IN || "8h",
+    audience: "boss-grand-garment-api",
+    issuer: "boss-grand-garment-system",
   });
 };
 
@@ -35,14 +35,14 @@ const generateAccessToken = (user) => {
 const generateRefreshToken = (user) => {
   const payload = {
     id: user._id,
-    type: 'refresh',
+    type: "refresh",
     iat: Math.floor(Date.now() / 1000),
   };
 
   return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
-    audience: 'boss-grand-garment-api',
-    issuer: 'boss-grand-garment-system',
+    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
+    audience: "boss-grand-garment-api",
+    issuer: "boss-grand-garment-system",
   });
 };
 
@@ -54,12 +54,12 @@ const generateRefreshToken = (user) => {
  */
 const verifyAccessToken = (token) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET, {
-    audience: 'boss-grand-garment-api',
-    issuer: 'boss-grand-garment-system',
+    audience: "boss-grand-garment-api",
+    issuer: "boss-grand-garment-system",
   });
 
-  if (decoded.type !== 'access') {
-    throw new Error('Invalid token type');
+  if (decoded.type !== "access") {
+    throw new Error("Invalid token type");
   }
 
   return decoded;
@@ -73,12 +73,12 @@ const verifyAccessToken = (token) => {
  */
 const verifyRefreshToken = (token) => {
   const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET, {
-    audience: 'boss-grand-garment-api',
-    issuer: 'boss-grand-garment-system',
+    audience: "boss-grand-garment-api",
+    issuer: "boss-grand-garment-system",
   });
 
-  if (decoded.type !== 'refresh') {
-    throw new Error('Invalid token type');
+  if (decoded.type !== "refresh") {
+    throw new Error("Invalid token type");
   }
 
   return decoded;
