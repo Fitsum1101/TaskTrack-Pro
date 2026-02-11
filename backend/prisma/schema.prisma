@@ -126,8 +126,8 @@ model Project {
   managerId   Int
   manager   User @relation("ManagedProjects", fields: [managerId], references: [id])
 
-  teamId      Int
-  team        Team @relation(fields: [teamId], references: [id])
+  teamId      Int?
+  team        Team? @relation(fields: [teamId], references: [id])
 
   @@unique([teamId, name]) // project names must be unique within a team
   tasks     Task[]

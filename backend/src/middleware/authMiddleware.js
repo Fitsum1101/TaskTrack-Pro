@@ -34,10 +34,7 @@ const authenticate = async (req, res, next) => {
 
     if (!token) {
       return next(
-        new ApiError(
-          StatusCodes.UNAUTHORIZED,
-          req.t("auth.access_denied_no_token"),
-        ),
+        new ApiError(StatusCodes.UNAUTHORIZED, "auth.access_denied_no_token"),
       );
     }
 

@@ -92,11 +92,7 @@ app.get("/", (_, res) => {
 });
 
 // API Routes
-// app.use("/api/v1/permission", routeIndex.permission.permissionRoutes);
-// app.use("/api/v1/role", routeIndex.role.roleRoutes);
-// app.use("/api/v1/auth", routeIndex.auth.authRoutes);
-// app.use("/api/v1/user", routeIndex.users.userRoutes);
-// app.use("/api/v1/employee", routeIndex.employee.employeeRoutes);
+app.use("/api/v1/auth", routeIndex.auth.authRoutes);
 
 // Error Handling
 app.use(notFoundHandler);
