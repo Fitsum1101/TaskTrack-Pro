@@ -32,7 +32,7 @@ const validate = (schema) => (req, res, next) => {
       };
     });
 
-    const errorMessage = req.t("validation.failed");
+    const errorMessage = "validation.failed";
     return next(new ApiError(status.BAD_REQUEST, errorMessage, errorDetails));
   }
 

@@ -1,0 +1,11 @@
+{
+  "common": {
+    "errors": {
+      "route_not_found": "Route not found",
+      "invalid_json": "Invalid JSON payload",
+      "validation_error": "Validation error",
+      "duplicate_key": "Duplicate key",
+      "resource_not_found": "Resource not found"
+    }
+  }
+}

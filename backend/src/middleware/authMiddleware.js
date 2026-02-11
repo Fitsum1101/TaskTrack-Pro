@@ -34,7 +34,7 @@ const authenticate = async (req, res, next) => {
 
     if (!token) {
       return next(
-        new ApiError(StatusCodes.UNAUTHORIZED, "auth.access_denied_no_token"),
+        new ApiError(StatusCodes.UNAUTHORIZED, "access token missing"),
       );
     }
 
@@ -47,15 +47,11 @@ const authenticate = async (req, res, next) => {
     });
 
     if (!user) {
-      return next(
-        new ApiError(StatusCodes.UNAUTHORIZED, req.t("auth.user_not_found")),
-      );
+      return next(new ApiError(StatusCodes.UNAUTHORIZED, "user not found"));
     }
 
     if (!user.isActive) {
-      return next(
-        new ApiError(StatusCodes.FORBIDDEN, req.t("auth.account_disabled")),
-      );
+      return next(new ApiError(StatusCodes.FORBIDDEN, "account disabled"));
     }
 
     // if (user.changedPasswordAfter(decoded.iat)) {
@@ -76,18 +72,14 @@ const authenticate = async (req, res, next) => {
     next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
-      return next(
-        new ApiError(StatusCodes.UNAUTHORIZED, req.t("auth.token_expired")),
-      );
+      return next(new ApiError(StatusCodes.UNAUTHORIZED, "token expired"));
     } else if (err.name === "JsonWebTokenError") {
-      return next(
-        new ApiError(StatusCodes.UNAUTHORIZED, req.t("auth.invalid_token")),
-      );
+      return next(new ApiError(StatusCodes.UNAUTHORIZED, "invalid token"));
     }
 
     console.error("Authentication error:", err);
     return next(
-      new ApiError(StatusCodes.UNAUTHORIZED, req.t("auth.auth_failed")),
+      new ApiError(StatusCodes.UNAUTHORIZED, "authentication failed"),
     );
   }
 };
