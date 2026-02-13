@@ -1,4 +1,3 @@
-import { MenuItem } from "@/types/MenuItem";
 import {
   Users,
   Shield,
@@ -9,7 +8,7 @@ import {
   Phone,
 } from "lucide-react";
 
-export const MENU_CONFIG: MenuItem[] = [
+export const MENU_CONFIG = [
   {
     label: "Employees",
     icon: Users,

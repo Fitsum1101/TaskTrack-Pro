@@ -1,8 +1,7 @@
 import { rootPersistConfig, rootReducer } from "./reducers";
 
 import { configureStore } from "@reduxjs/toolkit";
-import { persistReducer } from "redux-persist";
-import { persistStore } from "redux-persist";
+import { persistReducer, persistStore } from "redux-persist";
 import { apiSlice } from "./apiSlice";
 
 export const makeStore = () => {
