@@ -1,5 +1,10 @@
 import "./App.css";
+import { Navbar } from "./components/custom/navbar";
 
 export default function App() {
-  return <div className="app">TaskTrack Pro</div>;
+  return (
+    <>
+      <Navbar onSidebarToggle={() => {}} />
+    </>
+  );
 }
