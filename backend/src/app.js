@@ -93,6 +93,7 @@ app.get("/", (_, res) => {
 
 // API Routes
 app.use("/api/v1/auth", routeIndex.auth.authRoutes);
+app.use("/api/v1/companies", routeIndex.companies.companyRoutes);
 
 // Error Handling
 app.use(notFoundHandler);
