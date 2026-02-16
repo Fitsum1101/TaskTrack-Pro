@@ -1,8 +1,10 @@
-import { ACCESS_TOKEN } from "@/constant/variables";
 import axios from "axios";
 
+import { ACCESS_TOKEN } from "@/constant/variables";
+import { VITE_BASE_URL } from "./secreate";
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
+  baseURL: VITE_BASE_URL,
   timeout: 1000,
   headers: { "X-Custom-Header": "foobar" },
 });

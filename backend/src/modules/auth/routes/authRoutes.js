@@ -2,7 +2,9 @@
 const router = require("express").Router();
 const authController = require("../controllers/authController");
 const authValidation = require("../validations/authValidation");
+
 const validate = require("../../../middleware/validatorMiddleware");
+
 const authenticate = require("../../../middleware/authMiddleware");
 
 // ==============================
@@ -13,6 +15,7 @@ const authenticate = require("../../../middleware/authMiddleware");
 router.post("/login", validate(authValidation.login), authController.login);
 
 // Register (assuming you have a register controller & schema)
+
 router.post(
   "/register",
   validate(authValidation.register),
