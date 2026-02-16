@@ -92,7 +92,6 @@ const login = async (username, password) => {
   const user = await prisma.user.findUnique({
     where: { username: username.toLowerCase() },
   });
-
   if (!user || !user.isActive)
     throw new ApiError(status.FORBIDDEN, locals.auth.incorrect_credentials);
 
@@ -104,13 +103,13 @@ const login = async (username, password) => {
     throw new ApiError(status.FORBIDDEN, locals.auth.account_pending);
   }
 
-  if (user.status === "REJECTED") {
-    throw new ApiError(status.FORBIDDEN, locals.auth.account_rejected);
+  if (user.status === "DISABLED") {
+    throw new ApiError(status.FORBIDDEN, locals.auth.account_disabled);
   }
 
-  if (user.lockUntil && new Date() < user.lockUntil) {
-    throw new ApiError(status.FORBIDDEN, locals.auth.account_locked);
-  }
+  // if (user.lockUntil && new Date() < user.lockUntil) {
+  //   throw new ApiError(status.FORBIDDEN, locals.auth.account_locked);
+  // }
 
   if (!match) {
     await incrementLoginAttempts(user);

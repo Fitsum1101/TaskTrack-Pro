@@ -21,7 +21,7 @@ const LoginPage = () => {
               Welcome back
             </h1>
 
-            <p className="text-muted-foreground mb-8">
+            <p className="text-muted-foreground mb-4">
               Sign in to your TaskTrack account to continue
             </p>
 

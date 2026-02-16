@@ -8,22 +8,17 @@ const jwt = require("jsonwebtoken");
  */
 const generateAccessToken = (user) => {
   const payload = {
-    id: user._id,
+    id: user.id,
     username: user.username,
     isActive: user.isActive,
-    role: {
-      name: user.role.name,
-      id: user.role.id,
-    },
-    type: "access",
-
+    role: user.role,
     iat: Math.floor(Date.now() / 1000),
   };
 
   return jwt.sign(payload, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRES_IN || "8h",
-    audience: "boss-grand-garment-api",
-    issuer: "boss-grand-garment-system",
+    audience: "Task-Managment-api",
+    issuer: "Task-Managment-system",
   });
 };
 
@@ -34,15 +29,15 @@ const generateAccessToken = (user) => {
  */
 const generateRefreshToken = (user) => {
   const payload = {
-    id: user._id,
+    id: user.id,
     type: "refresh",
     iat: Math.floor(Date.now() / 1000),
   };
 
   return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
     expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
-    audience: "boss-grand-garment-api",
-    issuer: "boss-grand-garment-system",
+    audience: "Task-Managment-api",
+    issuer: "Task-Managment-system",
   });
 };
 
@@ -54,8 +49,8 @@ const generateRefreshToken = (user) => {
  */
 const verifyAccessToken = (token) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET, {
-    audience: "boss-grand-garment-api",
-    issuer: "boss-grand-garment-system",
+    audience: "Task-Managment-api",
+    issuer: "Task-Managment-system",
   });
 
   if (decoded.type !== "access") {
@@ -73,8 +68,8 @@ const verifyAccessToken = (token) => {
  */
 const verifyRefreshToken = (token) => {
   const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET, {
-    audience: "boss-grand-garment-api",
-    issuer: "boss-grand-garment-system",
+    audience: "Task-Managment-api",
+    issuer: "Task-Managment-system",
   });
 
   if (decoded.type !== "refresh") {

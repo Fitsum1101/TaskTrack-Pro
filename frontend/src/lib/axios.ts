@@ -5,7 +5,7 @@ import { VITE_BASE_URL } from "./secreate";
 
 const axiosInstance = axios.create({
   baseURL: VITE_BASE_URL,
-  timeout: 1000,
+  timeout: 10000,
   headers: { "X-Custom-Header": "foobar" },
 });
 
@@ -28,6 +28,7 @@ axiosInstance.interceptors.request.use(function (config) {
 });
 
 axiosInstance.interceptors.response.use(undefined, async (error) => {
+  console.error("Axios error:", error);
   if (error.response?.status === 401) {
     await refreshToken();
     return axiosInstance(error.config);

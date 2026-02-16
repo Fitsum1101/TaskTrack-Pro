@@ -3,7 +3,7 @@ module.exports = [
   {
     firstName: "Alice",
     lastName: "Admin",
-    username: "alice.admin",
+    username: "admin",
     email: "admin@acme.com",
     password: "admin123",
     role: "ADMIN",
@@ -13,7 +13,7 @@ module.exports = [
   {
     firstName: "Peter",
     lastName: "Manager",
-    username: "peter.manager",
+    username: "manager",
     email: "manager@acme.com",
     password: "manager123",
     role: "PROJECT_MANAGER",
@@ -23,7 +23,7 @@ module.exports = [
   {
     firstName: "Eve",
     lastName: "Employee",
-    username: "eve.employee",
+    username: "employee",
     email: "employee@acme.com",
     password: "employee123", // invited user
     role: "TEAM_MEMBER",

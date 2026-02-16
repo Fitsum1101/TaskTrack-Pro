@@ -1,54 +1,80 @@
-import { motion } from "framer-motion";
+import { Bell, Search, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
-import { Link } from "react-router";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { ProfileDropdown } from "./profile-dropdown";
+import { motion } from "framer-motion";
 import { ThemeToggle } from "./theme-toggle";
 
-export function Navbar() {
-  const [isClient, setIsClient] = useState(false);
+interface NavbarProps {
+  onSidebarToggle: () => void;
+}
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null;
+export function Navbar({ onSidebarToggle }: NavbarProps) {
+  const [hasNotifications, setHasNotifications] = useState(true);
 
   return (
-    <header className="border-b border-border bg-card/50 backdrop-blur-sm shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 lg:px-8 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link to="/" className="inline-flex items-center gap-2 group">
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center group-hover:shadow-lg transition-shadow">
-            <span className="text-white font-bold text-sm">T</span>
+    <header className="border-b border-border bg-card shadow-sm">
+      <div className="flex items-center justify-between gap-4 px-6 py-4">
+        {/* Left section - Search and toggle */}
+        <div className="flex flex-1 items-center gap-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onSidebarToggle}
+            className="md:hidden"
+          >
+            <Menu className="size-5" />
+          </Button>
+          <div className="hidden flex-1 max-w-sm md:block">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search projects, tasks..."
+                className="pl-9 rounded-lg bg-secondary/50 text-foreground placeholder:text-muted-foreground border-border transition-colors focus:bg-background"
+              />
+            </div>
           </div>
-          <span className="font-bold text-lg text-foreground hidden sm:inline">
-            TaskTrack
-          </span>
-        </Link>
+        </div>
 
-        {/* Right Section */}
-        <div className="flex items-center gap-3">
-          {/* Documentation Link */}
+        {/* Right section - Notifications, Theme toggle, and Profile */}
+        <div className="flex items-center gap-2">
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link
-              to="#"
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-md hover:bg-secondary/50"
+            <Button
+              variant="ghost"
+              size="icon"
+              className="relative transition-colors hover:bg-accent"
+              title="Notifications"
             >
-              Docs
-            </Link>
+              <Bell className="size-5" />
+              {hasNotifications && (
+                <motion.span
+                  className="absolute right-2 top-2 size-2 rounded-full bg-primary"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+              )}
+            </Button>
           </motion.div>
 
-          {/* Theme Toggle */}
-          <motion.button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <ThemeToggle />
-          </motion.button>
+          </motion.div>
 
-          {/* Login Button */}
-          <Link to="/login">
-            <Button variant="ghost" className="text-sm">
-              Sign in
-            </Button>
-          </Link>
+          {true && <ProfileDropdown />}
+        </div>
+      </div>
+
+      {/* Mobile search */}
+      <div className="block px-6 pb-4 md:hidden">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search..."
+            className="pl-9 rounded-lg bg-secondary/50 text-foreground placeholder:text-muted-foreground border-border transition-colors focus:bg-background"
+          />
         </div>
       </div>
     </header>

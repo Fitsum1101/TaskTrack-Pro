@@ -46,7 +46,7 @@ router.post(
 // ==============================
 // PROTECTED ROUTES (require authentication)
 // ==============================
-router.use(authenticate);
+// router.use(authenticate);
 
 // Logout
 router.post("/logout", validate(authValidation.logout), authController.logout);

@@ -18,6 +18,7 @@ import {
 } from "@/schema/authSchema";
 
 import { useLoginMutation } from "@/services/authApiSlice";
+import { useEffect, useState } from "react";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -28,11 +29,8 @@ const LoginForm = () => {
     mode: "onChange",
   });
 
-  const [login, { isLoading, error }] = useLoginMutation();
-
-  if (error) {
-    console.log("Login error:", error);
-  }
+  const [login, { isLoading, isError, error }] = useLoginMutation();
+  console.log("Login error:", error);
 
   const onCompleteFormsSuccess = (
     response: ApiResponse<LoginResponseData, unknown>,
@@ -42,8 +40,6 @@ const LoginForm = () => {
       navigate("/dashboard");
     }
   };
-
-  console.log("Login form errors:", methods.formState.errors);
 
   const submitHandler = useFormSubmitHandler<
     LoginFormType,
@@ -58,10 +54,13 @@ const LoginForm = () => {
   return (
     <FormProvider onSubmit={methods.handleSubmit(onSubmit)} methods={methods}>
       {/* Email Field */}
+
+      <LoginFormError isError={isError} />
+
       <div className="space-y-5">
         <RHFTextField
           type="text"
-          name="userName"
+          name="username"
           label="username"
           isRequired={true}
           placeholder="Enter your username"
@@ -101,4 +100,27 @@ const LoginForm = () => {
   );
 };
 
+const LoginFormError = ({ isError }: { isError: boolean }) => {
+  const [isErrorState, setIsErrorState] = useState(false);
+
+  useEffect(() => {
+    if (isError) {
+      setIsErrorState(true);
+      const timeoutId = setTimeout(() => {
+        setIsErrorState(false);
+      }, 5000);
+      return () => clearTimeout(timeoutId);
+    } else {
+      setIsErrorState(false);
+    }
+  }, [isError]); // Add isError to dependency array
+
+  return (
+    <div className="flex items-center mb-4 justify-between">
+      {isErrorState && (
+        <p className="text-sm text-red-500">Invalid username or password.</p>
+      )}
+    </div>
+  );
+};
 export default LoginForm;
