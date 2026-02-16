@@ -3,18 +3,23 @@ import "./index.css";
 import App from "./App.tsx";
 import { Provider } from "react-redux";
 import { store } from "./store/app.ts";
-import { ThemeProvider } from "./components/custom/theme-provider.tsx";
+import { BrowserRouter, Route, Routes } from "react-router";
+
+import LoginPage from "./pages/auth/login/page.tsx";
+import { AuthProvider } from "./contexts/auth-context.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <>
     <Provider store={store}>
-      <ThemeProvider
-        defaultTheme="dark"
-        enableSystem={false}
-        storageKey="tasktrack-theme"
-      >
-        <App />
-      </ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<App />}>
+              <Route index element={<LoginPage />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </Provider>
   </>,
 );

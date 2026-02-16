@@ -1,33 +1,43 @@
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
-import { Button } from "@/components/ui/button";
+// components/ThemeToggle.tsx
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { Moon, Sun } from "lucide-react";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
-  // Avoid hydration mismatch
   useEffect(() => {
-    setMounted(true);
+    // Check for saved theme preference or system preference
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+
+    if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+      document.documentElement.classList.add("dark");
+      setIsDark(true);
+    }
   }, []);
 
-  if (!mounted) {
-    return (
-      <Button variant="outline" size="icon" className="glass bg-transparent">
-        <Sun className="h-5 w-5" />
-      </Button>
-    );
-  }
+  const toggleTheme = () => {
+    if (isDark) {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    } else {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    }
+    setIsDark(!isDark);
+  };
 
   return (
     <Button
       variant="outline"
       size="icon"
       className="glass hover:glow transition-all duration-300 bg-transparent"
-      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      onClick={toggleTheme}
     >
-      {theme === "dark" ? (
+      {isDark ? (
         <Sun className="h-5 w-5 text-yellow-400 transition-transform hover:rotate-90 duration-300" />
       ) : (
         <Moon className="h-5 w-5 text-blue-600 transition-transform hover:-rotate-12 duration-300" />

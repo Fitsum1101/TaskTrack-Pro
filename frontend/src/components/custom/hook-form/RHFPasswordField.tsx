@@ -8,12 +8,15 @@ interface IProps {
   name: string;
   label: string;
   isRequired?: boolean;
+  showIcon?: boolean;
 }
 
 export default function RHFPasswordField({
   name,
   label,
   isRequired = true,
+  className,
+  showIcon = false,
   ...other
 }: IProps & React.InputHTMLAttributes<HTMLInputElement>) {
   const { control, clearErrors } = useFormContext();
@@ -25,11 +28,22 @@ export default function RHFPasswordField({
       control={control}
       render={({ field, fieldState: { error } }) => (
         <div className="space-y-2">
-          <Label htmlFor={name}>{label}</Label>
+          <Label htmlFor={name}>
+            {label}{" "}
+            {isRequired ? (
+              <span className="text-red-500">*</span>
+            ) : (
+              <span className="text-gray-400 font-normal text-[10px]">
+                (optional)
+              </span>
+            )}
+          </Label>
 
           <div className="relative">
             {/* Left Lock Icon */}
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            {showIcon && (
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            )}
 
             <Input
               id={name}
@@ -39,9 +53,15 @@ export default function RHFPasswordField({
                 clearErrors(name);
               }}
               type={showPassword ? "text" : "password"}
-              className={`pl-11 pr-11 glass border-white/20 bg-card/40 ${
-                error ? "border-red-500" : ""
-              }`}
+              className={`w-full h-10 rounded-md border py-2 
+              } text-[16px] font-normal placeholder:text-xs placeholder:font-light
+                focus:ring-0 focus:ring-offset-0 focus-visible:ring-[0.3px] focus-visible:outline-none
+                ${
+                  error
+                    ? "border-red-500"
+                    : "border-gray-300 dark:border-gray-600"
+                }
+                ${className}`}
               {...other}
             />
 
