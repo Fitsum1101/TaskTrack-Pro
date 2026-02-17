@@ -17,3 +17,5 @@ router
   .route(":id")
   .put(validate(updateCompanyValidation), companyController.updateCompany)
   .delete(validate(deleteCompanyValidation), companyController.deleteCompany);
+
+module.exports = router;

@@ -6,8 +6,6 @@ const ApiError = require("../../../utils/apiError");
 
 const companyService = require("../services/companyService");
 
-const locals = require("../locales/en.json");
-
 const updateCompany = catchAsync(async (req, res) => {
   const updatedCompany = await companyService.updateCompany(req.body);
   return ApiResponse(
