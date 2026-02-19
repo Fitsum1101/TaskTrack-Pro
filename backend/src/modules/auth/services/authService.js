@@ -92,6 +92,7 @@ const login = async (username, password) => {
   const user = await prisma.user.findUnique({
     where: { username: username.toLowerCase() },
   });
+
   if (!user || !user.isActive)
     throw new ApiError(status.FORBIDDEN, locals.auth.incorrect_credentials);
 

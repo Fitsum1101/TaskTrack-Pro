@@ -30,7 +30,6 @@ const LoginForm = () => {
   });
 
   const [login, { isLoading, isError, error }] = useLoginMutation();
-  console.log("Login error:", error);
 
   const onCompleteFormsSuccess = (
     response: ApiResponse<LoginResponseData, unknown>,

@@ -1,10 +1,11 @@
 import { apiSlice } from "@/store/apiSlice";
+import type { AuthUserProfile } from "@/types/new/user";
 
 const prefix = "/api/v1/auth";
 
 export const authApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    login: builder.mutation({
+    login: builder.mutation<AuthUserProfile, null>({
       query: (data) => ({
         url: `${prefix}/login`,
         method: "POST",

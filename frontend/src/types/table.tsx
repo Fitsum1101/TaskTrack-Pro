@@ -41,7 +41,14 @@ export type DataGridProps<T> = {
 };
 
 // types/table.ts
-export type FilterValue = string | number | boolean | null | undefined | object | Array<string | number | boolean | null | undefined | object>;
+export type FilterValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | object
+  | Array<string | number | boolean | null | undefined | object>;
 export type Filters = Record<string, FilterValue>;
 
 export interface UseTableStateProps {
@@ -49,7 +56,7 @@ export interface UseTableStateProps {
   defaultLimit?: number;
   defaultSearch?: string;
   defaultSortBy?: string;
-  defaultSortOrder?: 'asc' | 'desc';
+  defaultSortOrder?: "asc" | "desc";
   defaultFilters?: Filters;
   debounceDelay?: number;
 }
@@ -58,30 +65,29 @@ export interface UseTableStateReturn {
   // Pagination
   page: number;
   limit: number;
-  
+
   // Search
   search: string;
   debouncedSearch: string;
-  
+
   // Sorting
   sortBy: string;
-  sortOrder: 'asc' | 'desc';
-  
+  sortOrder: "asc" | "desc";
+
   // Additional filters
   filters: Filters;
-  
+
   // Handlers
   handlePageChange: (newPage: number) => void;
   handleSearch: (searchTerm: string) => void;
   handleLimitChange: (newLimit: number) => void;
-  handleSortChange: (sortBy: string, sortOrder: 'asc' | 'desc') => void;
+  handleSortChange: (sortBy: string, sortOrder: "asc" | "desc") => void;
   handleFilterChange: (filters: Filters) => void;
   setFilter: (key: string, value: FilterValue) => void;
   removeFilter: (key: string) => void;
-  
+
   // Utilities
   getQueryParams: () => Record<string, FilterValue>;
   resetFilters: () => void;
   resetAll: () => void;
 }
-

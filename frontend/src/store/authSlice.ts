@@ -1,10 +1,9 @@
-import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { AuthUserProfile } from "@/types/new/user";
-import { authApiSlice } from "@/services/authApiSlice";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { type AuthUserProfile } from "@/types/new/user";
 import { getItemFromLocalDb, setItemLocalDb } from "@/lib/localDb";
 import { ACCESS_TOKEN, REFRESH_TOKEN, AUTH_USER } from "@/constant/variables";
-import { safeJSONParse } from "@/util/safeJSONParse";
-import { AuthState } from "@/types/new/auth";
+import type { AuthState } from "@/types/new/auth";
+import { safeJSONParse } from "@/utils/safeJSONParse";
 
 // Initial state
 const initialState: AuthState = {
@@ -36,19 +35,19 @@ const getInitialState = (): AuthState => {
 };
 
 // Fetch user profile from API
-export const fetchAuthData = createAsyncThunk<AuthUserProfile | null>(
-  "auth/fetchAuthData",
-  async (_, { rejectWithValue, dispatch }) => {
-    try {
-      const result = await dispatch(
-        authApiSlice.endpoints.profile.initiate(undefined),
-      ).unwrap();
-      return result || null;
-    } catch (error: any) {
-      return rejectWithValue(error?.data || error.message);
-    }
-  },
-);
+// export const fetchAuthData = createAsyncThunk<AuthUserProfile | null>(
+//   "auth/fetchAuthData",
+//   async (_, { rejectWithValue, dispatch }) => {
+//     try {
+//       const result = await dispatch(
+//         authApiSlice.endpoints.profile.initiate(undefined),
+//       ).unwrap();
+//       return result || null;
+//     } catch (error: any) {
+//       return rejectWithValue(error?.data || error.message);
+//     }
+//   },
+// );
 
 // Auth slice
 const authSlice = createSlice({
@@ -81,22 +80,22 @@ const authSlice = createSlice({
       localStorage.removeItem(AUTH_USER);
     },
   },
-  extraReducers: (builder) => {
-    builder.addCase(fetchAuthData.fulfilled, (state, action) => {
-      if (action.payload) {
-        state.user = action.payload as any;
-        state.isAuthenticated = true;
-      }
-      state.isLoading = false;
-    });
-    builder.addCase(fetchAuthData.rejected, (state) => {
-      state.user = null;
-      state.accessToken = null;
-      state.refreshToken = null;
-      state.isAuthenticated = false;
-      state.isLoading = false;
-    });
-  },
+  // extraReducers: (builder) => {
+  //   builder.addCase(fetchAuthData.fulfilled, (state, action) => {
+  //     if (action.payload) {
+  //       state.user = action.payload as any;
+  //       state.isAuthenticated = true;
+  //     }
+  //     state.isLoading = false;
+  //   });
+  //   builder.addCase(fetchAuthData.rejected, (state) => {
+  //     state.user = null;
+  //     state.accessToken = null;
+  //     state.refreshToken = null;
+  //     state.isAuthenticated = false;
+  //     state.isLoading = false;
+  //   });
+  // },
 });
 
 // Export actions

@@ -16,7 +16,7 @@
 function ApiError(statusCode, message, errors = [], stack) {
   Error.call(this, message);
   this.statusCode = statusCode;
-  this.message = message || 'Something went wrong';
+  this.message = message || "Something went wrong";
   this.success = false;
   this.errors = errors;
 
