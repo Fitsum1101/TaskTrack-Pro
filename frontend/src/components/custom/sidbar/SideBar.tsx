@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import {
-  Building2,
   ChevronLeft,
   ChevronRight,
   User,
@@ -9,7 +8,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { DashbordNavigationLink } from "@/constant/navigator";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,39 +17,17 @@ interface SidebarProps {
 }
 
 function Sidebar({ isOpen, onToggle, navigation }: SidebarProps) {
-  const pathname = window.location.pathname;
+  const location = useLocation();
+
+  const pathname = location.pathname;
 
   return (
     <div
       className={cn(
-        "fixed left-0 top-0 z-40 h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col",
+        "fixed left-0 h-[calc(100vh-67px)] bottom-0 z-40 bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col",
         isOpen ? "w-64" : "w-20",
       )}
     >
-      {/* Header */}
-      <div className="flex h-16 items-center px-4 border-b border-sidebar-border">
-        <div
-          className={cn(
-            "flex items-center gap-3 transition-all duration-200",
-            !isOpen && "justify-center w-full",
-          )}
-        >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary shadow-lg">
-            <Building2 className="h-5 w-5 text-primary-foreground" />
-          </div>
-          {isOpen && (
-            <div className="space-y-0.5">
-              <h1 className="font-bold text-lg text-sidebar-foreground tracking-tight">
-                Boss Grand
-              </h1>
-              <p className="text-xs text-muted-foreground font-medium">
-                Garment System
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
-
       {/* Toggle Button */}
       <div className="absolute -right-3 top-20 z-50">
         <Button
@@ -72,9 +49,7 @@ function Sidebar({ isOpen, onToggle, navigation }: SidebarProps) {
         <ul className="space-y-2">
           {navigation.map((item) => {
             const normalize = (path: string) => path.replace(/\/+$/, "");
-
             const isActive = normalize(pathname) === normalize(item.href);
-
             return (
               <li key={item.name}>
                 <Link
@@ -91,7 +66,6 @@ function Sidebar({ isOpen, onToggle, navigation }: SidebarProps) {
                   {isActive && (
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent" />
                   )}
-
                   <item.icon
                     className={cn(
                       "h-5 w-5 relative z-10 transition-transform",
@@ -100,6 +74,8 @@ function Sidebar({ isOpen, onToggle, navigation }: SidebarProps) {
                       isActive ? "scale-110" : "group-hover:scale-105",
                     )}
                   />
+
+                  <p className="text-sm text-green-500">{isActive}</p>
 
                   {isOpen && (
                     <span className="relative z-10 font-medium transition-all">
@@ -110,7 +86,7 @@ function Sidebar({ isOpen, onToggle, navigation }: SidebarProps) {
                   {/* Hover tooltip for collapsed state */}
                   {!isOpen && (
                     <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background text-xs rounded-md opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none z-50 shadow-lg">
-                      {item.name}
+                      {isActive} {item.name}
                       <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-foreground" />
                     </div>
                   )}

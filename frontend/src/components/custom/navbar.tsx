@@ -62,7 +62,7 @@ export function Navbar({ onSidebarToggle }: NavbarProps) {
             <ThemeToggle />
           </motion.div>
 
-          {true && <ProfileDropdown />}
+          <ProfileDropdown />
         </div>
       </div>
 
