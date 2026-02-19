@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { DashbordNavigationLink } from "@/constant/navigator";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useCurrentRouteSegment } from "@/hooks/useCurrentRouteSegment";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -17,14 +18,12 @@ interface SidebarProps {
 }
 
 function Sidebar({ isOpen, onToggle, navigation }: SidebarProps) {
-  const location = useLocation();
-
-  const pathname = location.pathname;
+  const pathname = useCurrentRouteSegment();
 
   return (
     <div
       className={cn(
-        "fixed left-0 h-[calc(100vh-67px)] bottom-0 z-40 bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col",
+        "relative left-0 h-full bottom-0 z-40 bg-sidebar border-r border-sidebar-border transition-all duration-300 ease-in-out flex flex-col",
         isOpen ? "w-64" : "w-20",
       )}
     >
@@ -48,8 +47,7 @@ function Sidebar({ isOpen, onToggle, navigation }: SidebarProps) {
       <nav className="flex-1 px-3 py-6 overflow-y-auto">
         <ul className="space-y-2">
           {navigation.map((item) => {
-            const normalize = (path: string) => path.replace(/\/+$/, "");
-            const isActive = normalize(pathname) === normalize(item.href);
+            const isActive = pathname === item.href.replace(/^\/+/, "");
             return (
               <li key={item.name}>
                 <Link
