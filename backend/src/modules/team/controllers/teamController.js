@@ -9,17 +9,16 @@ const {
   deleteTeam,
   getTeamsByCompany,
   validateTeamExists,
-} = require("../services/team.service");
+} = require("../services/teamService.js");
 
 /**
  * Create Team
  */
 
 const createTeamController = catchAsync(async (req, res) => {
-  const { name } = req.body;
   const companyId = req.user.companyId;
 
-  const team = await createTeam(companyId, name);
+  const team = await createTeam(companyId, req.body);
 
   return res
     .status(StatusCodes.CREATED)

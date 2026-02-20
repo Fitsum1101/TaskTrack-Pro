@@ -93,9 +93,10 @@ model User {
 }
 
 model Team {
-  id        Int     @id @default(autoincrement())
-  name      String
-  companyId Int
+  id          Int     @id @default(autoincrement())
+  name        String
+  description  String  @default("")
+  companyId     Int
   company   Company @relation(fields: [companyId], references: [id])
 
   members  User[]    @relation("TeamMembers")

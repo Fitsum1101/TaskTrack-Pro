@@ -54,25 +54,25 @@ async function validateTeamNameAvailable(companyId, name) {
    CRUD
 ====================================================== */
 
-async function createTeam(companyId, name) {
+async function createTeam(companyId, data) {
   await validateCompanyExists(companyId);
-  await validateTeamNameAvailable(companyId, name);
+  await validateTeamNameAvailable(companyId, data.name);
 
   return await prisma.team.create({
     data: {
-      name: name.trim(),
+      ...data,
       companyId,
     },
   });
 }
 
-async function updateTeam(teamId, companyId, newName) {
+async function updateTeam(teamId, companyId, data) {
   await validateTeamExists(teamId, companyId);
-  await validateTeamNameAvailable(companyId, newName);
+  await validateTeamNameAvailable(companyId, data.name);
 
   return await prisma.team.update({
     where: { id: teamId },
-    data: { name: newName.trim() },
+    data: { ...data },
   });
 }
 
@@ -118,6 +118,12 @@ async function getTeamsByCompany(companyId, options = {}) {
     companyId,
     ...(search && {
       name: {
+        contains: search,
+        mode: "insensitive",
+      },
+    }),
+    ...(search && {
+      description: {
         contains: search,
         mode: "insensitive",
       },

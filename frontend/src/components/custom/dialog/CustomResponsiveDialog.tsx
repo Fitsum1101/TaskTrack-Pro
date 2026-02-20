@@ -109,10 +109,10 @@ export function ResponsiveDialog({
     side === "bottom"
       ? "bottom"
       : side === "top"
-      ? "top"
-      : side === "left"
-      ? "left"
-      : "right";
+        ? "top"
+        : side === "left"
+          ? "left"
+          : "right";
 
   // Close button component
   const CloseButton = ({ className = "" }: { className?: string }) => (
@@ -122,7 +122,7 @@ export function ResponsiveDialog({
         size="icon"
         className={cn(
           "h-6 w-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-          className
+          className,
         )}
       >
         <X className="h-4 w-4" />
@@ -139,7 +139,7 @@ export function ResponsiveDialog({
           className={cn(
             sizeClasses[size],
             "gap-0 max-h-[90vh] overflow-hidden [&>button]:hidden",
-            dialogContentClassName
+            dialogContentClassName,
           )}
           onInteractOutside={(e) => preventClose && e.preventDefault()}
           onEscapeKeyDown={(e) => preventClose && e.preventDefault()}
@@ -159,7 +159,7 @@ export function ResponsiveDialog({
             <div
               className={cn(
                 "flex flex-col space-y-1.5 text-center sm:text-left",
-                headerClassName
+                headerClassName,
               )}
             >
               <div className="flex items-center justify-between">
@@ -218,7 +218,7 @@ export function ResponsiveDialog({
           drawerSide === "bottom" && "rounded-t-xl",
           drawerSide === "top" && "rounded-b-xl",
           "[&_.bg-muted]:hidden", // This hides the drag handle
-          drawerContentClassName
+          drawerContentClassName,
         )}
       >
         {/* Handle for drag indication */}
