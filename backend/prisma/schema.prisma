@@ -13,139 +13,321 @@ datasource db {
   provider = "mysql"
 }
 
-// Roles for company users
-enum Role {
-  ADMIN
-  PROJECT_MANAGER
-  TEAM_MEMBER
+
+
+//////////////////////
+// TABLES
+//////////////////////
+
+
+model PlatformUsers {
+  id         String               @id @default(uuid())
+  first_name String
+  last_name  String
+  email      String            @unique
+  password_hash String
+  last_login DateTime?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
 }
 
-// Status for company approval
-enum CompanyStatus {
-  PENDING
-  ACCEPTED
-  REJECTED
-}
-
-enum UserStatus {
-  PENDING   // invited, no password yet
-  ACTIVE    // password set, can login
-  DISABLED  // fired / blocked
-}
-
-// The super admin of the system
-model SystemAdmin {
-  id        Int      @id @default(autoincrement())
-  username  String
-  email     String    @unique
-  password  String
-  role      String     @default("SYSTEM_ADMIN")
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
-}
-
-// The company using the system
 model Company {
-  id        Int           @id @default(autoincrement())
-  name      String        @unique
-  status    CompanyStatus @default(PENDING)
-
-  // Contact information
-  phone     String?
-  address   String?
-  city      String?
+  id         String           @id @default(uuid())
+  name       String         @unique
+  email      String         @unique
+  phone      String?
+  address    String?
+  document   String?
+  status     CompanyStatus @default(APPROVED)
+  isActive   Boolean       @default(true)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  approvedAt DateTime?
 
   // Relations
-  users     User[]
-  teams     Team[]
-
-  // Audit
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
+  users         User[]
+  teams         Team[]
+  employeePosition         EmployeePosition[]
+  projects      Project[]
+  activityLogs  ActivityLog[]
+  AuthToken      AuthToken[]
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  firstName String
-  lastName  String
-  username  String?  @unique
-  email     String   @unique
-  password  String?
-  role      Role
-  companyId Int
-  status     UserStatus @default(PENDING)
-  
-  company   Company @relation(fields: [companyId], references: [id])
-  isActive            Boolean      @default(true)
-  lastLogin           DateTime?
-  loginAttempts       Int          @default(0)
-  lockUntil           DateTime?
-  passwordChangedAt   DateTime?
-  passwordResetToken  String?
-  passwordResetExpires DateTime?
-  createdAt           DateTime     @default(now())
-  updatedAt           DateTime     @updatedAt
+  id            String          @id @default(uuid())
+  companyId     String
+  first_name    String
+  last_name     String
+  email         String       @unique
+  password_hash String
+  phone         String?
+  profile_picture String?
+  role_type     UserRoleType @default(EMPLOYEE)
+  is_active     Boolean      @default(true)
+  last_login    DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
-  teams        Team[]    @relation("TeamMembers")
-  teamMemberships TeamMember[]
-  tasks        Task[]
-  projects     Project[] @relation("ManagedProjects")
+  // Relations
+  company       Company       @relation(fields: [companyId], references: [id])
+  employeePositionAssignment     EmployeePositionAssignment[]
+  teamMemberships TeamMembers[]
+  tasksCreated  Task[]       @relation("TaskCreated")
+  attachments   Attachment[]
+  authTokens    AuthToken[]
+  activityLogs  ActivityLog[]
+  notification  Notification[]
+}
+ 
+model EmployeePosition {
+  id        String      @id @default(uuid())
+  companyId String
+  name      String   // e.g., Teacher, Librarian
+  description String?
+  is_active Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  company  Company @relation(fields: [companyId], references: [id])
+  employees EmployeePositionAssignment[]
+  @@unique([companyId,name])
+}
+
+model EmployeePositionAssignment {
+  id         String       @id @default(uuid())
+  userId     String
+  positionId String
+  assignedAt DateTime  @default(now())
+
+  // Relations
+  user     User             @relation(fields: [userId], references: [id])
+  position EmployeePosition @relation(fields: [positionId], references: [id])
+
+  @@unique([userId, positionId])
 }
 
 model Team {
-  id          Int     @id @default(autoincrement())
-  name        String
-  description  String  @default("")
-  companyId     Int
-  company   Company @relation(fields: [companyId], references: [id])
+  id         String      @id @default(uuid())
+  companyId  String
+  name       String       
+  description String?
+  createdBy  String       // FK to User (admin)
+  is_active  Boolean   @default(true)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-  members  User[]    @relation("TeamMembers")
-  @@unique([companyId, name]) // team names must be unique within a company
-  teamMembers TeamMember[]
-  projects Project[]
+  // Relations
+  company    Company   @relation(fields: [companyId], references: [id])
+  @@unique([companyId,name])
+  members    TeamMembers[]
+  projects   Project[]
 }
 
-model TeamMember {
-  id        Int      @id @default(autoincrement())
+model TeamMembers {
+  id       String   @id @default(uuid())
+  teamId  String
+  userId   String
+  joinedAt DateTime @default(now())
+ 
+  team            Team @relation(fields: [teamId], references: [id])
+  user            User  @relation(fields: [userId], references: [id])
+  taskAssignment  TaskAssignment[]     
 
-  teamId    Int
-  userId    Int
-
-  team      Team     @relation(fields: [teamId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-
-  joinedAt  DateTime @default(now())
-
-  @@unique([teamId, userId]) // a user can join a team only once
+  @@unique([teamId, userId])
 }
 
 model Project {
-  id          Int     @id @default(autoincrement())
+  id          String       @id @default(uuid())
+  companyId   String
+  teamId     String?      // team assigned
   name        String
   description String?
+  createdBy   String       // manager id
+  status      ProjectStatus @default(PLANNED)
+  priority    Priority      @default(MEDIUM)
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
-  managerId   Int
-  manager   User @relation("ManagedProjects", fields: [managerId], references: [id])
+  // Relations
+  company     Company @relation(fields: [companyId], references: [id])
+  team        Team?  @relation(fields: [teamId], references: [id])
+  module       Module[]
+  @@unique([teamId,name])
+}
 
-  teamId      Int?
-  team        Team? @relation(fields: [teamId], references: [id])
 
-  @@unique([teamId, name]) // project names must be unique within a team
-  tasks     Task[]
-  createdAt DateTime @default(now())
+model Module {
+  id          String   @id @default(uuid())
+  projectId   String
+  name        String   // Frontend, Backend, Testing
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  project Project @relation(fields: [projectId], references: [id])
+  tasks   Task[]
+
+  @@unique([projectId,name])
 }
 
 model Task {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  status      String   @default("not started")
-  progress    Int      @default(0)
-  assignedTo  Int?
-  assignee    User?    @relation(fields: [assignedTo], references: [id])
-  projectId   Int
-  project     Project  @relation(fields: [projectId], references: [id])
+  id               String       @id @default(uuid())
+  moduleId        String
+  title            String
+  description      String?
+  assignedById     String
+  status           TaskStatus   @default(TODO)
+  priority         Priority     @default(MEDIUM)
+  dueDate          DateTime?
+  estimatedHours   Float?
+  actualHours      Float?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  completedAt      DateTime?
 
-  @@unique([projectId, title]) // task titles must be unique within a project
+  // Relations
+  module    Module  @relation(fields: [moduleId], references: [id])
+  assignedBy       User       @relation("TaskCreated", fields: [assignedById], references: [id])
+  assignments      TaskAssignment[] // NEW: multiple team members
+  attachments      Attachment[]
+  @@unique([moduleId,title])
+}
+
+model TaskAssignment {
+  id        String      @id @default(uuid())
+  taskId    String
+  teamMemberId String
+  assignedAt DateTime   @default(now())
+  status    TaskStatus  @default(TODO)  // optional, track progress per member
+  estimatedHours Float?                 // optional per member
+  actualHours Float?                    // optional per member
+
+  // Relations
+  task      Task        @relation(fields: [taskId], references: [id])
+  teamMember TeamMembers @relation(fields: [teamMemberId], references: [id])
+  comments         TaskComment[]
+
+  @@unique([taskId, teamMemberId])
+}
+
+model TaskComment {
+  id        String      @id @default(uuid())
+  taskAssignmentId    String
+  comment   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  taskAssignment TaskAssignment @relation(fields: [taskAssignmentId], references: [id])
+}
+
+model Attachment {
+  id        String      @id @default(uuid())
+  taskId    String
+  fileName  String
+  fileUrl   String
+  fileType  String?
+  fileSize  String?
+  uploadedBy String
+  createdAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id])
+  user User @relation(fields: [uploadedBy], references: [id])
+}
+
+model AuthToken {
+  id        String       @id @default(uuid())
+  userId    String
+  companyId String?
+  tokenHash String
+  type      TokenType
+  expiresAt DateTime
+  isUsed    Boolean   @default(false)
+  usedAt    DateTime?
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime  @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  company Company? @relation(fields: [companyId], references: [id])
+}
+
+model ActivityLog {
+  id          String      @id @default(uuid())
+  companyId   String
+  userId      String
+  action      String
+  entityType  String
+  entityId    String?
+  description String?
   createdAt   DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String      @id @default(uuid())
+  userId    String
+  title     String
+  message   String
+  type      String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+
+
+//////////////////////
+// ENUMS
+//////////////////////
+enum UserRoleType {
+  ADMIN
+  MANAGER
+  EMPLOYEE
+}
+
+enum PlatformRoleType {
+  SUPER_ADMIN
+  COMPANY_MANAGER
+  SUPPORT
+}
+
+enum CompanyStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum ProjectStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  REVIEW
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TokenType {
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+  ACCOUNT_ACTIVATION
+  INVITE_USER
 }

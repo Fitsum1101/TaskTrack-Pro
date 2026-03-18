@@ -9,11 +9,13 @@ import LoginPage from "./pages/auth/login/page.tsx";
 import { AuthProvider } from "./contexts/auth-context.tsx";
 import DashboardPage from "./pages/dashboard/page.tsx";
 import TeamsPage from "./pages/dashboard/teams/page.tsx";
+import { Toaster } from "sonner";
 
 createRoot(document.getElementById("root")!).render(
   <>
     <Provider store={store}>
       <AuthProvider>
+        <Toaster />
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<App />}>

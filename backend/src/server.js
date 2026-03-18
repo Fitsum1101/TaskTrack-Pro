@@ -30,6 +30,7 @@ const startServer = async () => {
 
     // Connect to database first
     const prisma = await connectDB();
+
     console.log("✅ Connected to MySQL database");
 
     // Verify connection

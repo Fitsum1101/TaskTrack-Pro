@@ -32,6 +32,28 @@ const createTeamController = catchAsync(async (req, res) => {
 });
 
 /**
+ * Update Team
+ */
+
+const updateTeamController = catchAsync(async (req, res) => {
+  const companyId = req.user.companyId;
+  const teamId = Number(req.params.id);
+  const { name } = req.body;
+
+  const updatedTeam = await updateTeam(teamId, companyId, name);
+
+  return res
+    .status(StatusCodes.OK)
+    .json(
+      new ApiResponse(
+        StatusCodes.OK,
+        updatedTeam,
+        locals.team.team_updated_successfully,
+      ),
+    );
+});
+
+/**
  * Get Teams (Pagination + Search)
  */
 
@@ -74,28 +96,6 @@ const getSingleTeamController = catchAsync(async (req, res) => {
         StatusCodes.OK,
         team,
         locals.team.team_fetched_successfully,
-      ),
-    );
-});
-
-/**
- * Update Team
- */
-
-const updateTeamController = catchAsync(async (req, res) => {
-  const companyId = req.user.companyId;
-  const teamId = Number(req.params.id);
-  const { name } = req.body;
-
-  const updatedTeam = await updateTeam(teamId, companyId, name);
-
-  return res
-    .status(StatusCodes.OK)
-    .json(
-      new ApiResponse(
-        StatusCodes.OK,
-        updatedTeam,
-        locals.team.team_updated_successfully,
       ),
     );
 });

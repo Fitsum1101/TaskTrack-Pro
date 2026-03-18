@@ -9,7 +9,6 @@ import RHFPasswordField from "@/components/custom/hook-form/RHFPasswordField";
 import PrimaryButton from "@/components/custom/button/PrimaryButton";
 
 import useFormSubmitHandler, { type ApiResponse } from "@/hooks/formHandler";
-import type { LoginResponseData } from "@/types/auth";
 
 import {
   loginFormDefault,
@@ -17,44 +16,32 @@ import {
   type LoginFormType,
 } from "@/schema/authSchema";
 
-import { useLoginMutation } from "@/services/authApiSlice";
 import { useEffect, useState } from "react";
+import { useLoginMutation } from "@/services/authApiSlice";
 
 const LoginForm = () => {
   const navigate = useNavigate();
 
+  const [login, { isLoading }] = useLoginMutation();
+
   const methods = useForm<LoginFormType>({
-    resolver: zodResolver(loginFormSchema),
     defaultValues: loginFormDefault,
-    mode: "onChange",
+    resolver: zodResolver(loginFormSchema),
   });
 
-  const [login, { isLoading, isError, error }] = useLoginMutation();
-
-  const onCompleteFormsSuccess = (
-    response: ApiResponse<LoginResponseData, unknown>,
-  ) => {
-    const data = response?.data;
-    if (data) {
+  const handleSumbiot = useFormSubmitHandler(
+    login,
+    () => {
       navigate("/dashboard");
-    }
-  };
-
-  const submitHandler = useFormSubmitHandler<
-    LoginFormType,
-    LoginResponseData,
-    unknown
-  >(login, onCompleteFormsSuccess);
-
-  const onSubmit = async (data: LoginFormType) => {
-    await submitHandler(data);
-  };
+    },
+    "login sucessful",
+  );
 
   return (
-    <FormProvider onSubmit={methods.handleSubmit(onSubmit)} methods={methods}>
+    <FormProvider
+      methods={methods}
+      onSubmit={methods.handleSubmit(handleSumbiot)}>
       {/* Email Field */}
-
-      <LoginFormError isError={isError} />
 
       <div className="space-y-5">
         <RHFTextField
@@ -78,8 +65,7 @@ const LoginForm = () => {
       <div className="flex mt-5 justify-end">
         <Link
           to="#"
-          className="text-sm text-primary hover:text-primary/80 font-medium transition-colors"
-        >
+          className="text-sm text-primary hover:text-primary/80 font-medium transition-colors">
           Forgot password?
         </Link>
       </div>
@@ -91,8 +77,7 @@ const LoginForm = () => {
         isLoading={isLoading}
         loadingText="Signing in..."
         icon={<ArrowRight className="size-4" />}
-        iconPosition="right"
-      >
+        iconPosition="right">
         Sign In
       </PrimaryButton>
     </FormProvider>

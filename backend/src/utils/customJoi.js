@@ -3,12 +3,13 @@ const Joi = require("joi");
 const { validate: isUuid } = require("uuid");
 
 // Custom ID validation: UUID only (for Prisma)
-const id = Joi.string().custom((value, helpers) => {
-  if (!isUuid(value)) {
-    return helpers.error("any.invalid", { value });
-  }
-  return value;
-}, "UUID validation");
+const id = () =>
+  Joi.string().custom((value, helpers) => {
+    if (!isUuid(value)) {
+      return helpers.error("any.invalid", { value });
+    }
+    return value;
+  }, "UUID validation");
 
 // Password validation with complexity requirements
 const password = () => {

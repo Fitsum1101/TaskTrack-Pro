@@ -14,24 +14,26 @@ const locals = require("../locales/en.json");
 const login = catchAsync(async (req, res) => {
   const { username, password } = req.body;
 
+  console.log({ username, password });
+
   const { accessToken, refreshToken, user } = await authService.login(
     username,
     password,
   );
 
-  res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-  });
+  // res.cookie("refreshToken", refreshToken, {
+  //   httpOnly: true,
+  //   secure: process.env.NODE_ENV === "production",
+  //   sameSite: "strict",
+  //   maxAge: 7 * 24 * 60 * 60 * 1000,
+  // });
 
   return res
     .status(StatusCodes.OK)
     .json(
       new ApiResponse(
         StatusCodes.OK,
-        { accessToken, refreshToken, user },
+        { accessToken, refreshToken, user, message: "login sucessfuly" },
         locals.auth.login_successful,
       ),
     );

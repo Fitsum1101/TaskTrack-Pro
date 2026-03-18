@@ -98,20 +98,6 @@ const login = async (username, password) => {
 
   const match = await isPasswordMatch(user, password);
 
-  //  check if the user is accepted to login or not
-
-  if (user.status === "PENDING") {
-    throw new ApiError(status.FORBIDDEN, locals.auth.account_pending);
-  }
-
-  if (user.status === "DISABLED") {
-    throw new ApiError(status.FORBIDDEN, locals.auth.account_disabled);
-  }
-
-  // if (user.lockUntil && new Date() < user.lockUntil) {
-  //   throw new ApiError(status.FORBIDDEN, locals.auth.account_locked);
-  // }
-
   if (!match) {
     await incrementLoginAttempts(user);
     throw new ApiError(status.FORBIDDEN, locals.auth.incorrect_credentials);
@@ -124,11 +110,11 @@ const login = async (username, password) => {
     data: { lastLogin: new Date() },
   });
 
-  const { accessToken, refreshToken } = generateTokens(user);
+  // const { accessToken, refreshToken } = generateTokens(user);
 
   return {
-    accessToken,
-    refreshToken,
+    accessToken: "euwuusjsjs",
+    refreshToken: "jsjsjjjs",
     user: { ...user, password: undefined },
   };
 };
