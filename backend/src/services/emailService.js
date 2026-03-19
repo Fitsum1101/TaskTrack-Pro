@@ -30,8 +30,12 @@ let transporter;
  */
 const compileTemplate = (templateName, context) => {
   try {
-    const templatePath = path.join(__dirname, 'templates', `${templateName}.html`);
-    
+    const templatePath = path.join(
+      __dirname,
+      'templates',
+      `${templateName}.html`
+    );
+
     if (!fs.existsSync(templatePath)) {
       throw new Error(`Email template '${templateName}.html' not found`);
     }
@@ -101,7 +105,7 @@ const sendEmail = async (to, subject, templateName, context = {}) => {
 
     // Send the email directly
     const result = await sendEmailDirectly(to, subject, html);
-    
+
     return result;
   } catch (error) {
     console.error(`Email sending failed: ${error.message}`);
@@ -118,7 +122,7 @@ const sendEmail = async (to, subject, templateName, context = {}) => {
 
 const sendPasswordResetEmail = async (email, resetToken) => {
   const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}&email=${email}`;
-  
+
   return await sendEmail(
     email,
     'Reset Your Password - iCog Sync',
@@ -127,22 +131,17 @@ const sendPasswordResetEmail = async (email, resetToken) => {
       name: 'User', // You might want to fetch user's name from DB
       resetUrl,
       expiryTime: '10 minutes',
-      supportEmail: process.env.SUPPORT_EMAIL || 'support@icogsync.com'
+      supportEmail: process.env.SUPPORT_EMAIL || 'support@icogsync.com',
     }
   );
 };
 
 const sendWelcomeEmail = async (email, name) => {
-  return await sendEmail(
-    email,
-    'Welcome to iCog Sync!',
-    'welcome',
-    {
-      name,
-      loginUrl: `${process.env.FRONTEND_URL}/login`,
-      supportEmail: process.env.SUPPORT_EMAIL || 'support@icogsync.com'
-    }
-  );
+  return await sendEmail(email, 'Welcome to iCog Sync!', 'welcome', {
+    name,
+    loginUrl: `${process.env.FRONTEND_URL}/login`,
+    supportEmail: process.env.SUPPORT_EMAIL || 'support@icogsync.com',
+  });
 };
 
 const sendMeetingInviteEmail = async (email, meetingDetails) => {
@@ -157,7 +156,7 @@ const sendMeetingInviteEmail = async (email, meetingDetails) => {
       meetingTime: meetingDetails.time,
       organizer: meetingDetails.organizer,
       meetingUrl: meetingDetails.url,
-      agenda: meetingDetails.agenda
+      agenda: meetingDetails.agenda,
     }
   );
 };

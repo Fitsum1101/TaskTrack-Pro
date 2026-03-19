@@ -1,19 +1,19 @@
 // src/modules/auth/services/authService.js
-const { status } = require("http-status");
+const { status } = require('http-status');
 
-const { prisma } = require("../../../config/db");
-const ApiError = require("../../../utils/apiError");
-const companyService = require("../../company/services/companyService");
-const locals = require("../locales/en.json");
+const { prisma } = require('../../../config/db');
+const ApiError = require('../../../utils/apiError');
+const companyService = require('../../company/services/companyService');
+const locals = require('../locales/en.json');
 
 const {
   generateTokens,
   verifyRefreshToken,
   verifyAccessToken,
-} = require("../../../utils/jwtToken");
+} = require('../../../utils/jwtToken');
 
-const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
+const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 // In-memory blacklist for refresh tokens (replace with Redis/DB in production)
 const blacklistedRefreshTokens = new Set();
@@ -56,11 +56,11 @@ const resetLoginAttempts = async (user) => {
  * Helper: Create password reset token
  */
 const createPasswordResetToken = async (user) => {
-  const resetToken = crypto.randomBytes(32).toString("hex");
+  const resetToken = crypto.randomBytes(32).toString('hex');
   const hashedToken = crypto
-    .createHash("sha256")
+    .createHash('sha256')
     .update(resetToken)
-    .digest("hex");
+    .digest('hex');
 
   const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
@@ -76,10 +76,10 @@ const createPasswordResetToken = async (user) => {
  * Helper: Check if password changed after JWT issued
  */
 const changedPasswordAfter = (user, JWTTimestamp) => {
-  if (!user.passwordChangedAt) return false;
+  if (!user.passwordChangedAt) {return false;}
   const changedTimestamp = parseInt(
     user.passwordChangedAt.getTime() / 1000,
-    10,
+    10
   );
   return JWTTimestamp < changedTimestamp;
 };
@@ -94,7 +94,7 @@ const login = async (username, password) => {
   });
 
   if (!user || !user.isActive)
-    throw new ApiError(status.FORBIDDEN, locals.auth.incorrect_credentials);
+  {throw new ApiError(status.FORBIDDEN, locals.auth.incorrect_credentials);}
 
   const match = await isPasswordMatch(user, password);
 
@@ -113,8 +113,8 @@ const login = async (username, password) => {
   // const { accessToken, refreshToken } = generateTokens(user);
 
   return {
-    accessToken: "euwuusjsjs",
-    refreshToken: "jsjsjjjs",
+    accessToken: 'euwuusjsjs',
+    refreshToken: 'jsjsjjjs',
     user: { ...user, password: undefined },
   };
 };
@@ -138,7 +138,7 @@ const register = async (collData) => {
     username: collData.username,
     email: collData.email,
     password: collData.password,
-    role: "ADMIN",
+    role: 'ADMIN',
   };
 
   const existingUser = await prisma.user.findUnique({
@@ -146,7 +146,7 @@ const register = async (collData) => {
   });
 
   if (existingUser)
-    throw new ApiError(status.CONFLICT, "auth.user_already_exists");
+  {throw new ApiError(status.CONFLICT, 'auth.user_already_exists');}
 
   const company = await companyService.createCompany(companyData);
 
@@ -169,7 +169,7 @@ const forgotPassword = async (username) => {
     where: { username: username.toLowerCase(), isActive: true },
   });
   if (!user)
-    return { message: "If the username exists, a reset link has been sent" };
+  {return { message: 'If the username exists, a reset link has been sent' };}
   return await createPasswordResetToken(user);
 };
 
@@ -177,7 +177,7 @@ const forgotPassword = async (username) => {
  * Reset password
  */
 const resetPassword = async (token, newPassword) => {
-  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
   const user = await prisma.user.findFirst({
     where: {
@@ -191,7 +191,7 @@ const resetPassword = async (token, newPassword) => {
   });
 
   if (!user)
-    throw new ApiError(status.BAD_REQUEST, "Token is invalid or has expired");
+  {throw new ApiError(status.BAD_REQUEST, 'Token is invalid or has expired');}
 
   const hashedPassword = await bcrypt.hash(newPassword, 12);
 
@@ -205,7 +205,7 @@ const resetPassword = async (token, newPassword) => {
   });
 
   const rolePermissions =
-    user.role?.permissions?.map((p) => p.permission) || [];
+		user.role?.permissions?.map((p) => p.permission) || [];
   const customPermissions = user.customPermissions || [];
   const permissions = [...new Set([...rolePermissions, ...customPermissions])];
 
@@ -230,11 +230,11 @@ const updatePassword = async (userId, currentPassword, newPassword) => {
     },
   });
 
-  if (!user) throw new ApiError(status.NOT_FOUND, "User not found");
+  if (!user) {throw new ApiError(status.NOT_FOUND, 'User not found');}
 
   const match = await isPasswordMatch(user, currentPassword);
   if (!match)
-    throw new ApiError(status.BAD_REQUEST, "auth.incorrect_current_password");
+  {throw new ApiError(status.BAD_REQUEST, 'auth.incorrect_current_password');}
 
   const hashedPassword = await bcrypt.hash(newPassword, 12);
 
@@ -244,7 +244,7 @@ const updatePassword = async (userId, currentPassword, newPassword) => {
   });
 
   const rolePermissions =
-    user.role?.permissions?.map((p) => p.permission) || [];
+		user.role?.permissions?.map((p) => p.permission) || [];
   const customPermissions = user.customPermissions || [];
   const permissions = [...new Set([...rolePermissions, ...customPermissions])];
 
@@ -261,15 +261,18 @@ const updatePassword = async (userId, currentPassword, newPassword) => {
  */
 const refreshTokens = async (refreshToken) => {
   if (!refreshToken)
-    throw new ApiError(status.UNAUTHORIZED, "auth.refresh_token_required");
+  {throw new ApiError(status.UNAUTHORIZED, 'auth.refresh_token_required');}
   if (blacklistedRefreshTokens.has(refreshToken))
-    throw new ApiError(status.UNAUTHORIZED, "auth.refresh_token_blacklisted");
+  {throw new ApiError(status.UNAUTHORIZED, 'auth.refresh_token_blacklisted');}
 
   let decoded;
   try {
     decoded = verifyRefreshToken(refreshToken);
   } catch {
-    throw new ApiError(status.UNAUTHORIZED, "Invalid or expired refresh token");
+    throw new ApiError(
+      status.UNAUTHORIZED,
+      'Invalid or expired refresh token'
+    );
   }
 
   const user = await prisma.user.findUnique({
@@ -281,15 +284,15 @@ const refreshTokens = async (refreshToken) => {
     },
   });
   if (!user || !user.isActive)
-    throw new ApiError(status.UNAUTHORIZED, "auth.invalid_refresh_token");
+  {throw new ApiError(status.UNAUTHORIZED, 'auth.invalid_refresh_token');}
 
   const rolePermissions =
-    user.role?.permissions?.map((p) => p.permission) || [];
+		user.role?.permissions?.map((p) => p.permission) || [];
   const customPermissions = user.customPermissions || [];
   const permissions = [...new Set([...rolePermissions, ...customPermissions])];
 
   const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-    generateTokens(user);
+		generateTokens(user);
   return {
     accessToken: newAccessToken,
     refreshToken: newRefreshToken,
@@ -313,13 +316,15 @@ const verifyToken = async (token) => {
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
       include: {
-        role: { include: { permissions: { include: { permission: true } } } },
+        role: {
+          include: { permissions: { include: { permission: true } } },
+        },
         customPermissions: true,
         employee: true,
       },
     });
     if (!user || !user.isActive || changedPasswordAfter(user, decoded.iat))
-      return null;
+    {return null;}
     return user;
   } catch {
     return null;
@@ -330,7 +335,7 @@ const verifyToken = async (token) => {
  * Verify password reset token
  */
 const verifyResetToken = async (token) => {
-  const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+  const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
   const user = await prisma.user.findFirst({
     where: {
       passwordResetToken: hashedToken,

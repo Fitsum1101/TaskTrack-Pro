@@ -1,14 +1,13 @@
 const { redisClient } = require('../config/redisConfig');
 const ApiError = require('../utils/apiError');
 
-
 const DAILY_LIMIT = process.env.NODE_ENV.trim() === 'development' ? 10 : 300;
 
 const RATE_LIMIT_PREFIX = 'rate_limit:smart_sourcing:';
 const USAGE_PREFIX = 'usage:smart_sourcing:';
 
-const getRateLimitKey = userId => `${RATE_LIMIT_PREFIX}${userId}`;
-const getUsageKey = userId => `${USAGE_PREFIX}${userId}`;
+const getRateLimitKey = (userId) => `${RATE_LIMIT_PREFIX}${userId}`;
+const getUsageKey = (userId) => `${USAGE_PREFIX}${userId}`;
 
 const getCurrentUTCDate = () => {
   const now = new Date();
@@ -28,7 +27,7 @@ const getTTLUntilMidnight = () => {
   return Math.ceil((midnight - now) / 1000);
 };
 
-const checkRateLimit = async userId => {
+const checkRateLimit = async (userId) => {
   if (!redisClient) {
     throw new ApiError(500, 'Redis client not available');
   }
@@ -44,13 +43,17 @@ const checkRateLimit = async userId => {
       const ttl = await redisClient.ttl(rateLimitKey);
       const resetTime = new Date(Date.now() + ttl * 1000);
 
-      throw new ApiError(429, 'Daily rate limit exceeded for smart sourcing', {
-        currentUsage: count,
-        dailyLimit: DAILY_LIMIT,
-        remainingRequests: 0,
-        resetTime: resetTime.toISOString(),
-        retryAfter: ttl,
-      });
+      throw new ApiError(
+        429,
+        'Daily rate limit exceeded for smart sourcing',
+        {
+          currentUsage: count,
+          dailyLimit: DAILY_LIMIT,
+          remainingRequests: 0,
+          resetTime: resetTime.toISOString(),
+          retryAfter: ttl,
+        }
+      );
     }
 
     return {
@@ -63,11 +66,13 @@ const checkRateLimit = async userId => {
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError(500, 'Error checking rate limit', { originalError: error.message });
+    throw new ApiError(500, 'Error checking rate limit', {
+      originalError: error.message,
+    });
   }
 };
 
-const incrementRateLimit = async userId => {
+const incrementRateLimit = async (userId) => {
   if (!redisClient) {
     throw new ApiError(500, 'Redis client not available');
   }
@@ -97,13 +102,17 @@ const incrementRateLimit = async userId => {
       const ttl = await redisClient.ttl(rateLimitKey);
       const resetTime = new Date(Date.now() + ttl * 1000);
 
-      throw new ApiError(429, 'Daily rate limit exceeded for smart sourcing', {
-        currentUsage: newCount,
-        dailyLimit: DAILY_LIMIT,
-        remainingRequests: 0,
-        resetTime: resetTime.toISOString(),
-        retryAfter: ttl,
-      });
+      throw new ApiError(
+        429,
+        'Daily rate limit exceeded for smart sourcing',
+        {
+          currentUsage: newCount,
+          dailyLimit: DAILY_LIMIT,
+          remainingRequests: 0,
+          resetTime: resetTime.toISOString(),
+          retryAfter: ttl,
+        }
+      );
     }
 
     return {
@@ -116,11 +125,13 @@ const incrementRateLimit = async userId => {
     if (error instanceof ApiError) {
       throw error;
     }
-    throw new ApiError(500, 'Error incrementing rate limit', { originalError: error.message });
+    throw new ApiError(500, 'Error incrementing rate limit', {
+      originalError: error.message,
+    });
   }
 };
 
-const getRateLimitStatus = async userId => {
+const getRateLimitStatus = async (userId) => {
   if (!redisClient) {
     return {
       currentUsage: 0,
@@ -162,7 +173,7 @@ const getRateLimitStatus = async userId => {
   }
 };
 
-const resetUserRateLimit = async userId => {
+const resetUserRateLimit = async (userId) => {
   if (!redisClient) {
     throw new ApiError(500, 'Redis client not available');
   }
@@ -175,7 +186,9 @@ const resetUserRateLimit = async userId => {
     await redisClient.del(rateLimitKey, usageKey);
     return { success: true, message: 'Rate limit reset successfully' };
   } catch (error) {
-    throw new ApiError(500, 'Error resetting rate limit', { originalError: error.message });
+    throw new ApiError(500, 'Error resetting rate limit', {
+      originalError: error.message,
+    });
   }
 };
 

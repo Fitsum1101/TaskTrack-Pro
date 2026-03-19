@@ -15,9 +15,9 @@
  *   res.status(200).json({ success: true, data: users });
  * });
  */
-const catchAsync = fn => {
+const catchAsync = (fn) => {
   return (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(err => {
+    Promise.resolve(fn(req, res, next)).catch((err) => {
       // Pass all errors to the next middleware (error handler)
       return next(err);
     });

@@ -5,13 +5,13 @@ module.exports = [
   {
     taskIndex: 0,
     teamMemberIndex: 0,
-    status: "IN_PROGRESS",
+    status: 'IN_PROGRESS',
     estimatedHours: 4,
   },
   {
     taskIndex: 0,
     teamMemberIndex: 1,
-    status: "TODO",
+    status: 'TODO',
     estimatedHours: 4,
   },
 
@@ -19,7 +19,7 @@ module.exports = [
   {
     taskIndex: 1,
     teamMemberIndex: 2,
-    status: "TODO",
+    status: 'TODO',
     estimatedHours: 6,
   },
 
@@ -27,7 +27,7 @@ module.exports = [
   {
     taskIndex: 2,
     teamMemberIndex: 3,
-    status: "DONE",
+    status: 'DONE',
     estimatedHours: 5,
     actualHours: 5,
   },
@@ -36,13 +36,13 @@ module.exports = [
   {
     taskIndex: 3,
     teamMemberIndex: 1,
-    status: "IN_PROGRESS",
+    status: 'IN_PROGRESS',
     estimatedHours: 5,
   },
   {
     taskIndex: 3,
     teamMemberIndex: 4,
-    status: "IN_PROGRESS",
+    status: 'IN_PROGRESS',
     estimatedHours: 5,
   },
 
@@ -50,7 +50,7 @@ module.exports = [
   {
     taskIndex: 4,
     teamMemberIndex: 5,
-    status: "TODO",
+    status: 'TODO',
     estimatedHours: 7,
   },
 
@@ -58,7 +58,7 @@ module.exports = [
   {
     taskIndex: 5,
     teamMemberIndex: 2,
-    status: "IN_PROGRESS",
+    status: 'IN_PROGRESS',
     estimatedHours: 10,
   },
 
@@ -66,7 +66,7 @@ module.exports = [
   {
     taskIndex: 6,
     teamMemberIndex: 3,
-    status: "IN_PROGRESS",
+    status: 'IN_PROGRESS',
     estimatedHours: 6,
   },
 
@@ -74,7 +74,7 @@ module.exports = [
   {
     taskIndex: 7,
     teamMemberIndex: 6,
-    status: "DONE",
+    status: 'DONE',
     estimatedHours: 4,
     actualHours: 4,
   },
@@ -83,7 +83,7 @@ module.exports = [
   {
     taskIndex: 8,
     teamMemberIndex: 0,
-    status: "TODO",
+    status: 'TODO',
     estimatedHours: 8,
   },
 
@@ -91,7 +91,7 @@ module.exports = [
   {
     taskIndex: 9,
     teamMemberIndex: 4,
-    status: "IN_PROGRESS",
+    status: 'IN_PROGRESS',
     estimatedHours: 5,
   },
 
@@ -99,7 +99,7 @@ module.exports = [
   {
     taskIndex: 10,
     teamMemberIndex: 1,
-    status: "DONE",
+    status: 'DONE',
     estimatedHours: 3,
     actualHours: 2,
   },

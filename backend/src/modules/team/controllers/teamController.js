@@ -1,7 +1,7 @@
-const { StatusCodes } = require("http-status-codes");
-const catchAsync = require("../utils/catchAsync");
-const ApiResponse = require("../utils/apiResponse");
-const locals = require("../config/locales");
+const { StatusCodes } = require('http-status-codes');
+const catchAsync = require('../utils/catchAsync');
+const ApiResponse = require('../utils/apiResponse');
+const locals = require('../config/locales');
 
 const {
   createTeam,
@@ -9,7 +9,7 @@ const {
   deleteTeam,
   getTeamsByCompany,
   validateTeamExists,
-} = require("../services/teamService.js");
+} = require('../services/teamService.js');
 
 /**
  * Create Team
@@ -26,8 +26,8 @@ const createTeamController = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.CREATED,
         team,
-        locals.team.team_created_successfully,
-      ),
+        locals.team.team_created_successfully
+      )
     );
 });
 
@@ -48,8 +48,8 @@ const updateTeamController = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         updatedTeam,
-        locals.team.team_updated_successfully,
-      ),
+        locals.team.team_updated_successfully
+      )
     );
 });
 
@@ -65,7 +65,7 @@ const getTeamsController = catchAsync(async (req, res) => {
     page,
     limit,
     search,
-    paginate: paginate === "false" ? false : true,
+    paginate: paginate === 'false' ? false : true,
   });
 
   return res
@@ -74,8 +74,8 @@ const getTeamsController = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         result,
-        locals.team.teams_fetched_successfully,
-      ),
+        locals.team.teams_fetched_successfully
+      )
     );
 });
 
@@ -95,8 +95,8 @@ const getSingleTeamController = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         team,
-        locals.team.team_fetched_successfully,
-      ),
+        locals.team.team_fetched_successfully
+      )
     );
 });
 
@@ -116,8 +116,8 @@ const deleteTeamController = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         null,
-        locals.team.team_deleted_successfully,
-      ),
+        locals.team.team_deleted_successfully
+      )
     );
 });
 

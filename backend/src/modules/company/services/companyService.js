@@ -1,7 +1,7 @@
 // companyService code
-const { prisma } = require("../../../config/db");
-const ApiError = require("../../../utils/apiError");
-const { status } = require("http-status");
+const { prisma } = require('../../../config/db');
+const ApiError = require('../../../utils/apiError');
+const { status } = require('http-status');
 
 /**
  * Helper: Check comapny existes by id
@@ -47,11 +47,11 @@ const createCompany = async (companyData) => {
   const { name, phone } = companyData;
 
   if (!(await isCompanyNameUnique(name))) {
-    throw new ApiError(status.BAD_REQUEST, "Company name already exists");
+    throw new ApiError(status.BAD_REQUEST, 'Company name already exists');
   }
 
   if (!(await isPhoneNumberUnique(phone))) {
-    throw new ApiError(status.BAD_REQUEST, "Phone number already exists");
+    throw new ApiError(status.BAD_REQUEST, 'Phone number already exists');
   }
 
   const company = await prisma.company.create({
@@ -67,11 +67,11 @@ const createCompany = async (companyData) => {
 
 const updateCompany = async (data) => {
   if (!(await isCompanyNameUnique(data.name, data.id))) {
-    throw new ApiError(status.BAD_REQUEST, "Company name already exists");
+    throw new ApiError(status.BAD_REQUEST, 'Company name already exists');
   }
 
   if (!(await isPhoneNumberUnique(data.phone, data.id))) {
-    throw new ApiError(status.BAD_REQUEST, "Phone number already exists");
+    throw new ApiError(status.BAD_REQUEST, 'Phone number already exists');
   }
   return await prisma.company.update({
     where: {
@@ -87,14 +87,14 @@ const updateCompany = async (data) => {
 
 const deleteCompany = async (id) => {
   if (!isCompanyExistes(id)) {
-    throw new ApiError(status.NOT_FOUND, "resource does not existes");
+    throw new ApiError(status.NOT_FOUND, 'resource does not existes');
   }
   return await prisma.company.update({
     where: {
       id,
     },
     data: {
-      status: "REJECTED",
+      status: 'REJECTED',
     },
   });
 };

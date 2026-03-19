@@ -1,7 +1,7 @@
-const { StatusCodes } = require("http-status-codes");
-const ApiError = require("../utils/apiError");
-const { verifyAccessToken } = require("../utils/jwtToken");
-const { prisma } = require("../config/db");
+const { StatusCodes } = require('http-status-codes');
+const ApiError = require('../utils/apiError');
+const { verifyAccessToken } = require('../utils/jwtToken');
+const { prisma } = require('../config/db');
 
 /**
  * Extract token from various sources in request
@@ -11,9 +11,9 @@ const { prisma } = require("../config/db");
 function extractToken(req) {
   return (
     req.cookies?.token ||
-    req.headers["authorization"]?.replace("Bearer ", "") ||
-    req.headers["x-access-token"] ||
-    null
+		req.headers['authorization']?.replace('Bearer ', '') ||
+		req.headers['x-access-token'] ||
+		null
   );
 }
 
@@ -34,7 +34,7 @@ const authenticate = async (req, res, next) => {
 
     if (!token) {
       return next(
-        new ApiError(StatusCodes.UNAUTHORIZED, "access token missing"),
+        new ApiError(StatusCodes.UNAUTHORIZED, 'access token missing')
       );
     }
 
@@ -47,11 +47,11 @@ const authenticate = async (req, res, next) => {
     });
 
     if (!user) {
-      return next(new ApiError(StatusCodes.UNAUTHORIZED, "user not found"));
+      return next(new ApiError(StatusCodes.UNAUTHORIZED, 'user not found'));
     }
 
     if (!user.isActive) {
-      return next(new ApiError(StatusCodes.FORBIDDEN, "account disabled"));
+      return next(new ApiError(StatusCodes.FORBIDDEN, 'account disabled'));
     }
 
     // if (user.changedPasswordAfter(decoded.iat)) {
@@ -71,15 +71,15 @@ const authenticate = async (req, res, next) => {
 
     next();
   } catch (err) {
-    if (err.name === "TokenExpiredError") {
-      return next(new ApiError(StatusCodes.UNAUTHORIZED, "token expired"));
-    } else if (err.name === "JsonWebTokenError") {
-      return next(new ApiError(StatusCodes.UNAUTHORIZED, "invalid token"));
+    if (err.name === 'TokenExpiredError') {
+      return next(new ApiError(StatusCodes.UNAUTHORIZED, 'token expired'));
+    } else if (err.name === 'JsonWebTokenError') {
+      return next(new ApiError(StatusCodes.UNAUTHORIZED, 'invalid token'));
     }
 
-    console.error("Authentication error:", err);
+    console.error('Authentication error:', err);
     return next(
-      new ApiError(StatusCodes.UNAUTHORIZED, "authentication failed"),
+      new ApiError(StatusCodes.UNAUTHORIZED, 'authentication failed')
     );
   }
 };

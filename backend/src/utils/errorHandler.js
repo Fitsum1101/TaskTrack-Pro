@@ -1,5 +1,5 @@
-const locals = require("../locales/index");
-const ApiError = require("./apiError");
+const locals = require('../locales/index');
+const ApiError = require('./apiError');
 
 const notFoundHandler = (req, res, next) => {
   next(new ApiError(404, locals.commonLocal.common.errors.route_not_found));
@@ -9,8 +9,8 @@ const errorHandler = (err, req, res, _next) => {
   // Handle JSON parsing errors
   if (
     err instanceof SyntaxError &&
-    err.type === "entity.parse.failed" &&
-    err.status === 400
+		err.type === 'entity.parse.failed' &&
+		err.status === 400
   ) {
     return res.status(400).json({
       success: false,
@@ -20,12 +20,12 @@ const errorHandler = (err, req, res, _next) => {
   }
 
   // Handle Mongoose validation errors
-  if (err.name === "ValidationError") {
+  if (err.name === 'ValidationError') {
     const messages = Object.values(err.errors).map((val) => val.message);
     err = new ApiError(
       400,
       locals.commonLocal.common.errors.validation_error,
-      messages,
+      messages
     );
   }
 
@@ -35,10 +35,10 @@ const errorHandler = (err, req, res, _next) => {
   }
 
   // Handle Mongoose cast errors
-  if (err.name === "CastError") {
+  if (err.name === 'CastError') {
     err = new ApiError(
       404,
-      locals.commonLocal.common.errors.resource_not_found,
+      locals.commonLocal.common.errors.resource_not_found
     );
   }
 
@@ -48,7 +48,7 @@ const errorHandler = (err, req, res, _next) => {
   return res.status(statusCode).json({
     success: false,
     message:
-      err.message || locals.commonLocal.common.errors.internal_server_error,
+			err.message || locals.commonLocal.common.errors.internal_server_error,
     errors: err.errors || [],
   });
 };

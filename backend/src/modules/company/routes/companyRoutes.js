@@ -1,20 +1,20 @@
 // companyRoutes code
 
-const router = require("express").Router();
-const companyController = require("../controllers/companyController");
+const router = require('express').Router();
+const companyController = require('../controllers/companyController');
 const {
   updateCompanyValidation,
   deleteCompanyValidation,
-} = require("../validations/companyValidation");
+} = require('../validations/companyValidation');
 
-const validate = require("../../../middleware/validatorMiddleware");
+const validate = require('../../../middleware/validatorMiddleware');
 
-const authenticate = require("../../../middleware/authMiddleware");
+const authenticate = require('../../../middleware/authMiddleware');
 
 router.use(authenticate);
 
 router
-  .route(":id")
+  .route(':id')
   .put(validate(updateCompanyValidation), companyController.updateCompany)
   .delete(validate(deleteCompanyValidation), companyController.deleteCompany);
 

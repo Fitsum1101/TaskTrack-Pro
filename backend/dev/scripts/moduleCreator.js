@@ -2,22 +2,34 @@ const fs = require('fs');
 const path = require('path');
 
 // Create a directory if it doesn't exist
-const createDirectory = dirPath => {
+const createDirectory = (dirPath) => {
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
   }
 };
 
 // Create the module structure
-const moduleCreator = moduleName => {
-  const modulePath = path.join(__dirname, '../..', 'src', 'modules', moduleName); // Adjusted for your folder structure
+const moduleCreator = (moduleName) => {
+  const modulePath = path.join(
+    __dirname,
+    '../..',
+    'src',
+    'modules',
+    moduleName
+  ); // Adjusted for your folder structure
   console.log('Resolved module path:', modulePath);
 
-  const directories = ['controllers', 'models', 'routes', 'services', 'validations'];
+  const directories = [
+    'controllers',
+    'models',
+    'routes',
+    'services',
+    'validations',
+  ];
 
   // Create main module directory and its subdirectories
   createDirectory(modulePath);
-  directories.forEach(dir => createDirectory(path.join(modulePath, dir)));
+  directories.forEach((dir) => createDirectory(path.join(modulePath, dir)));
 
   //make module index.js file
   fs.writeFileSync(

@@ -1,11 +1,11 @@
-const { StatusCodes } = require("http-status-codes");
+const { StatusCodes } = require('http-status-codes');
 
-const ApiResponse = require("../../../utils/apiResponse");
-const catchAsync = require("../../../utils/catchAsync");
-const ApiError = require("../../../utils/apiError");
+const ApiResponse = require('../../../utils/apiResponse');
+const catchAsync = require('../../../utils/catchAsync');
+const ApiError = require('../../../utils/apiError');
 
-const authService = require("../services/authService");
-const locals = require("../locales/en.json");
+const authService = require('../services/authService');
+const locals = require('../locales/en.json');
 
 /**
  * Login user with username and password
@@ -18,7 +18,7 @@ const login = catchAsync(async (req, res) => {
 
   const { accessToken, refreshToken, user } = await authService.login(
     username,
-    password,
+    password
   );
 
   // res.cookie("refreshToken", refreshToken, {
@@ -33,9 +33,9 @@ const login = catchAsync(async (req, res) => {
     .json(
       new ApiResponse(
         StatusCodes.OK,
-        { accessToken, refreshToken, user, message: "login sucessfuly" },
-        locals.auth.login_successful,
-      ),
+        { accessToken, refreshToken, user, message: 'login sucessfuly' },
+        locals.auth.login_successful
+      )
     );
 });
 
@@ -50,8 +50,8 @@ const register = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.CREATED,
         user,
-        locals.auth.user_registered_successfully,
-      ),
+        locals.auth.user_registered_successfully
+      )
     );
 });
 
@@ -60,13 +60,15 @@ const register = catchAsync(async (req, res) => {
  */
 const logout = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
-  if (refreshToken) await authService.blacklistRefreshToken(refreshToken);
+  if (refreshToken) {await authService.blacklistRefreshToken(refreshToken);}
 
-  res.clearCookie("refreshToken");
+  res.clearCookie('refreshToken');
 
   return res
     .status(StatusCodes.OK)
-    .json(new ApiResponse(StatusCodes.OK, null, locals.auth.logout_successful));
+    .json(
+      new ApiResponse(StatusCodes.OK, null, locals.auth.logout_successful)
+    );
 });
 
 /**
@@ -76,10 +78,10 @@ const logout = catchAsync(async (req, res) => {
 const refreshTokens = catchAsync(async (req, res) => {
   const { refreshToken } = req.cookies;
   if (!refreshToken)
-    throw new ApiError(
-      StatusCodes.UNAUTHORIZED,
-      locals.auth.refresh_token_required,
-    );
+  {throw new ApiError(
+    StatusCodes.UNAUTHORIZED,
+    locals.auth.refresh_token_required
+  );}
 
   const {
     accessToken: newAccessToken,
@@ -87,10 +89,10 @@ const refreshTokens = catchAsync(async (req, res) => {
     user,
   } = await authService.refreshTokens(refreshToken);
 
-  res.cookie("refreshToken", newRefreshToken, {
+  res.cookie('refreshToken', newRefreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -100,8 +102,8 @@ const refreshTokens = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         { accessToken: newAccessToken, user },
-        locals.auth.tokens_refreshed,
-      ),
+        locals.auth.tokens_refreshed
+      )
     );
 });
 
@@ -112,15 +114,15 @@ const forgotPassword = catchAsync(async (req, res) => {
   const { username } = req.body;
   const resetToken = await authService.forgotPassword(username);
 
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === 'production') {
     return res
       .status(StatusCodes.OK)
       .json(
         new ApiResponse(
           StatusCodes.OK,
           null,
-          locals.auth.reset_instructions_sent,
-        ),
+          locals.auth.reset_instructions_sent
+        )
       );
   } else {
     return res
@@ -129,8 +131,8 @@ const forgotPassword = catchAsync(async (req, res) => {
         new ApiResponse(
           StatusCodes.OK,
           { resetToken },
-          locals.auth.reset_token_generated,
-        ),
+          locals.auth.reset_token_generated
+        )
       );
   }
 });
@@ -145,19 +147,19 @@ const resetPassword = catchAsync(async (req, res) => {
   if (!password || password.length < 6) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      locals.auth.password_min_length,
+      locals.auth.password_min_length
     );
   }
 
   const { accessToken, refreshToken, user } = await authService.resetPassword(
     token,
-    password,
+    password
   );
 
-  res.cookie("refreshToken", refreshToken, {
+  res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -167,8 +169,8 @@ const resetPassword = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         { accessToken, user },
-        locals.auth.password_reset_success,
-      ),
+        locals.auth.password_reset_success
+      )
     );
 });
 
@@ -182,20 +184,20 @@ const changePassword = catchAsync(async (req, res) => {
   if (!newPassword || newPassword.length < 6) {
     throw new ApiError(
       StatusCodes.BAD_REQUEST,
-      locals.auth.new_password_min_length,
+      locals.auth.new_password_min_length
     );
   }
 
   const { accessToken, refreshToken, user } = await authService.updatePassword(
     userId,
     currentPassword,
-    newPassword,
+    newPassword
   );
 
-  res.cookie("refreshToken", refreshToken, {
+  res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -205,8 +207,8 @@ const changePassword = catchAsync(async (req, res) => {
       new ApiResponse(
         StatusCodes.OK,
         { accessToken, user },
-        locals.auth.password_changed_success,
-      ),
+        locals.auth.password_changed_success
+      )
     );
 });
 
@@ -214,13 +216,16 @@ const changePassword = catchAsync(async (req, res) => {
  * Verify JWT access token
  */
 const verifyToken = catchAsync(async (req, res) => {
-  const token = req.header("Authorization")?.replace("Bearer ", "");
+  const token = req.header('Authorization')?.replace('Bearer ', '');
   if (!token)
-    throw new ApiError(StatusCodes.UNAUTHORIZED, locals.auth.no_token_provided);
+  {throw new ApiError(
+    StatusCodes.UNAUTHORIZED,
+    locals.auth.no_token_provided
+  );}
 
   const user = await authService.verifyToken(token);
   if (!user)
-    throw new ApiError(StatusCodes.UNAUTHORIZED, locals.auth.invalid_token);
+  {throw new ApiError(StatusCodes.UNAUTHORIZED, locals.auth.invalid_token);}
 
   return res
     .status(StatusCodes.OK)
@@ -233,22 +238,26 @@ const verifyToken = catchAsync(async (req, res) => {
 const verifyResetToken = catchAsync(async (req, res) => {
   const { token } = req.body;
   if (!token)
-    throw new ApiError(
-      StatusCodes.BAD_REQUEST,
-      locals.auth.refresh_token_required,
-    );
+  {throw new ApiError(
+    StatusCodes.BAD_REQUEST,
+    locals.auth.refresh_token_required
+  );}
 
   const user = await authService.verifyResetToken(token);
   if (!user)
-    throw new ApiError(
-      StatusCodes.UNAUTHORIZED,
-      locals.auth.invalid_reset_token,
-    );
+  {throw new ApiError(
+    StatusCodes.UNAUTHORIZED,
+    locals.auth.invalid_reset_token
+  );}
 
   return res
     .status(StatusCodes.OK)
     .json(
-      new ApiResponse(StatusCodes.OK, { user }, locals.auth.reset_token_valid),
+      new ApiResponse(
+        StatusCodes.OK,
+        { user },
+        locals.auth.reset_token_valid
+      )
     );
 });
 

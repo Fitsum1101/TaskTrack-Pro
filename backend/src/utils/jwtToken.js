@@ -1,5 +1,5 @@
 // utils/jwtToken.js
-const jwt = require("jsonwebtoken");
+const jwt = require('jsonwebtoken');
 
 /**
  * Generate an access token with security best practices
@@ -16,9 +16,9 @@ const generateAccessToken = (user) => {
   };
 
   return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || "8h",
-    audience: "Task-Managment-api",
-    issuer: "Task-Managment-system",
+    expiresIn: process.env.JWT_EXPIRES_IN || '8h',
+    audience: 'Task-Managment-api',
+    issuer: 'Task-Managment-system',
   });
 };
 
@@ -30,14 +30,14 @@ const generateAccessToken = (user) => {
 const generateRefreshToken = (user) => {
   const payload = {
     id: user.id,
-    type: "refresh",
+    type: 'refresh',
     iat: Math.floor(Date.now() / 1000),
   };
 
   return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
-    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
-    audience: "Task-Managment-api",
-    issuer: "Task-Managment-system",
+    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d',
+    audience: 'Task-Managment-api',
+    issuer: 'Task-Managment-system',
   });
 };
 
@@ -49,12 +49,12 @@ const generateRefreshToken = (user) => {
  */
 const verifyAccessToken = (token) => {
   const decoded = jwt.verify(token, process.env.JWT_SECRET, {
-    audience: "Task-Managment-api",
-    issuer: "Task-Managment-system",
+    audience: 'Task-Managment-api',
+    issuer: 'Task-Managment-system',
   });
 
-  if (decoded.type !== "access") {
-    throw new Error("Invalid token type");
+  if (decoded.type !== 'access') {
+    throw new Error('Invalid token type');
   }
 
   return decoded;
@@ -68,12 +68,12 @@ const verifyAccessToken = (token) => {
  */
 const verifyRefreshToken = (token) => {
   const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET, {
-    audience: "Task-Managment-api",
-    issuer: "Task-Managment-system",
+    audience: 'Task-Managment-api',
+    issuer: 'Task-Managment-system',
   });
 
-  if (decoded.type !== "refresh") {
-    throw new Error("Invalid token type");
+  if (decoded.type !== 'refresh') {
+    throw new Error('Invalid token type');
   }
 
   return decoded;

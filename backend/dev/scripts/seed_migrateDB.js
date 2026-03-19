@@ -1,21 +1,21 @@
 // dev/scripts/seed_migrateDB.js
 
-const systemAdminData = require("./data/systemAdminData");
-const companyData = require("./data/companyData");
-const usersData = require("./data/usersData");
-const teamsData = require("./data/teamsData");
-const projectsData = require("./data/projectsData");
-const tasksData = require("./data/tasksData");
-const teamMembersData = require("./data/teamMembersData");
-const employeePositionData = require("./data/employeePostion");
-const employeePostionAssignment = require("./data/employeePostionAssignment");
-const taskCommentData = require("./data/taskComment");
-const moduleData = require("./data/moduleData");
-const taskAssignmentData = require("./data/taskAssignmentData");
+const systemAdminData = require('./data/systemAdminData');
+const companyData = require('./data/companyData');
+const usersData = require('./data/usersData');
+const teamsData = require('./data/teamsData');
+const projectsData = require('./data/projectsData');
+const tasksData = require('./data/tasksData');
+const teamMembersData = require('./data/teamMembersData');
+const employeePositionData = require('./data/employeePostion');
+const employeePostionAssignment = require('./data/employeePostionAssignment');
+const taskCommentData = require('./data/taskComment');
+const moduleData = require('./data/moduleData');
+const taskAssignmentData = require('./data/taskAssignmentData');
 
-require("dotenv").config();
-const bcrypt = require("bcrypt");
-const { connectDB, getPrisma, disconnectDB } = require("../../src/config/db");
+require('dotenv').config();
+const bcrypt = require('bcrypt');
+const { connectDB, getPrisma, disconnectDB } = require('../../src/config/db');
 
 // Import data files
 
@@ -28,16 +28,16 @@ const logger = {
 
 // --- Seeding Functions ---
 const clearDatabase = async (prisma) => {
-  console.log("🧹 Clearing database...");
+  console.log('🧹 Clearing database...');
 
   const tables = [
-    "Task",
-    "Project",
-    "TeamMember",
-    "Team",
-    "User",
-    "Company",
-    "SystemAdmin",
+    'Task',
+    'Project',
+    'TeamMember',
+    'Team',
+    'User',
+    'Company',
+    'SystemAdmin',
   ];
 
   for (const table of tables) {
@@ -49,24 +49,24 @@ const clearDatabase = async (prisma) => {
     }
   }
 
-  console.log("🎉 Database cleared successfully");
+  console.log('🎉 Database cleared successfully');
 };
 
 const seedCompanyData = async (prisma) => {
-  logger.info("Seeding company data...");
+  logger.info('Seeding company data...');
 
   for (const data of companyData) {
     await prisma.company.upsert({
       where: { name: data.name },
       update: {
-        status: data.status || "APPROVED",
+        status: data.status || 'APPROVED',
         address: data.address,
         phone: data.phone,
         description: data.description,
       },
       create: {
         name: data.name,
-        status: data.status || "APPROVED",
+        status: data.status || 'APPROVED',
         address: data.address,
         phone: data.phone,
         description: data.description,
@@ -82,7 +82,7 @@ const seedCompanyData = async (prisma) => {
 };
 
 const seedUsers = async (prisma) => {
-  logger.info("Seeding users...");
+  logger.info('Seeding users...');
 
   for (const user of usersData) {
     let hashedPassword = await bcrypt.hash(user.password, 12);
@@ -118,7 +118,7 @@ const seedUsers = async (prisma) => {
 };
 
 const seedEmployeePositions = async (prisma) => {
-  logger.info("Seeding employee positions...");
+  logger.info('Seeding employee positions...');
 
   for (const pos of employeePositionData) {
     const company = await prisma.company.findFirst({
@@ -159,7 +159,7 @@ const seedEmployeePositions = async (prisma) => {
 };
 
 const seedEmployeePositionAssignments = async (prisma) => {
-  logger.info("Seeding employee position assignments...");
+  logger.info('Seeding employee position assignments...');
 
   for (const item of employeePostionAssignment) {
     const user = await prisma.user.findUnique({
@@ -169,7 +169,7 @@ const seedEmployeePositionAssignments = async (prisma) => {
     });
 
     if (!user) {
-      logger.warn(`User not found, skipping assignment...`);
+      logger.warn('User not found, skipping assignment...');
       continue;
     }
 
@@ -180,7 +180,7 @@ const seedEmployeePositionAssignments = async (prisma) => {
     });
 
     if (!position) {
-      logger.warn(`Position not found, skipping assignment...`);
+      logger.warn('Position not found, skipping assignment...');
       continue;
     }
 
@@ -203,12 +203,12 @@ const seedEmployeePositionAssignments = async (prisma) => {
   }
 
   logger.success(
-    `Seeded ${employeePostionAssignment.length} position assignments`,
+    `Seeded ${employeePostionAssignment.length} position assignments`
   );
 };
 
 const seedTeamsData = async (prisma) => {
-  logger.info("Seeding teams data...");
+  logger.info('Seeding teams data...');
 
   for (const team of teamsData) {
     const company = await prisma.company.findFirst({
@@ -230,7 +230,7 @@ const seedTeamsData = async (prisma) => {
         name: team.name,
         description: team.description,
         companyId: company.id,
-        createdBy: "102292ii",
+        createdBy: '102292ii',
       },
     });
   }
@@ -238,7 +238,7 @@ const seedTeamsData = async (prisma) => {
 };
 
 const seedTeamMembersData = async (prisma) => {
-  logger.info("Seeding team members data...");
+  logger.info('Seeding team members data...');
 
   for (const tm of teamMembersData) {
     const company = await prisma.company.findUnique({
@@ -279,7 +279,7 @@ const seedTeamMembersData = async (prisma) => {
 };
 
 const seedProjectsData = async (prisma) => {
-  logger.info("Seeding projects data...");
+  logger.info('Seeding projects data...');
 
   for (const project of projectsData) {
     const company = await prisma.company.findFirst({
@@ -294,14 +294,14 @@ const seedProjectsData = async (prisma) => {
     const manager = await prisma.user.findUnique({
       where: {
         email: usersData.find(
-          (user) => user.username === project.createdByUsername,
+          (user) => user.username === project.createdByUsername
         ).email,
       },
     });
 
     if (!team || !manager) {
       logger.warn(
-        `Team or Manager not found for project ${project.name}, skipping...`,
+        `Team or Manager not found for project ${project.name}, skipping...`
       );
       continue;
     }
@@ -325,7 +325,7 @@ const seedProjectsData = async (prisma) => {
 };
 
 const seedModules = async (prisma) => {
-  logger.info("Seeding modules...");
+  logger.info('Seeding modules...');
 
   for (const module of moduleData) {
     const project = await prisma.project.findFirst({
@@ -335,7 +335,9 @@ const seedModules = async (prisma) => {
     });
 
     if (!project) {
-      logger.warn(`Project not found for module ${module.name}, skipping...`);
+      logger.warn(
+        `Project not found for module ${module.name}, skipping...`
+      );
       continue;
     }
 
@@ -364,7 +366,7 @@ const seedModules = async (prisma) => {
 };
 
 const seedTasks = async (prisma) => {
-  logger.info("Seeding tasks...");
+  logger.info('Seeding tasks...');
 
   for (const task of tasksData) {
     const module = await prisma.module.findFirst({
@@ -398,8 +400,8 @@ const seedTasks = async (prisma) => {
       },
       update: {
         description: task.description,
-        status: task.status || "TODO",
-        priority: task.priority || "MEDIUM",
+        status: task.status || 'TODO',
+        priority: task.priority || 'MEDIUM',
         dueDate: task.dueDate || null,
         estimatedHours: task.estimatedHours || null,
         actualHours: task.actualHours || null,
@@ -411,8 +413,8 @@ const seedTasks = async (prisma) => {
         title: task.title,
         description: task.description,
         assignedById: user.id,
-        status: task.status || "TODO",
-        priority: task.priority || "MEDIUM",
+        status: task.status || 'TODO',
+        priority: task.priority || 'MEDIUM',
         dueDate: task.dueDate || null,
         estimatedHours: task.estimatedHours || null,
         actualHours: task.actualHours || null,
@@ -427,7 +429,7 @@ const seedTasks = async (prisma) => {
 };
 
 const seedTaskAssignments = async (prisma) => {
-  logger.info("Seeding task assignments...");
+  logger.info('Seeding task assignments...');
 
   for (const item of taskAssignmentData) {
     const task = await prisma.task.findFirst({
@@ -437,7 +439,7 @@ const seedTaskAssignments = async (prisma) => {
     });
 
     if (!task) {
-      logger.warn(`Task not found for assignment, skipping...`);
+      logger.warn('Task not found for assignment, skipping...');
       continue;
     }
 
@@ -448,7 +450,7 @@ const seedTaskAssignments = async (prisma) => {
     });
 
     if (!teamMember) {
-      logger.warn(`Team member not found, skipping...`);
+      logger.warn('Team member not found, skipping...');
       continue;
     }
 
@@ -460,7 +462,7 @@ const seedTaskAssignments = async (prisma) => {
         },
       },
       update: {
-        status: item.status || "TODO",
+        status: item.status || 'TODO',
         estimatedHours: item.estimatedHours || null,
         actualHours: item.actualHours || null,
       },
@@ -468,7 +470,7 @@ const seedTaskAssignments = async (prisma) => {
         taskId: task.id,
         teamMemberId: teamMember.id,
         assignedAt: new Date(),
-        status: item.status || "TODO",
+        status: item.status || 'TODO',
         estimatedHours: item.estimatedHours || null,
         actualHours: item.actualHours || null,
       },
@@ -479,7 +481,7 @@ const seedTaskAssignments = async (prisma) => {
 };
 
 const seedTaskComments = async (prisma) => {
-  logger.info("Seeding task comments...");
+  logger.info('Seeding task comments...');
 
   const assignments = await prisma.taskAssignment.findMany();
 
@@ -487,7 +489,7 @@ const seedTaskComments = async (prisma) => {
     const assignment = assignments[item.taskAssignmentIndex];
 
     if (!assignment) {
-      logger.warn(`TaskAssignment not found for comment, skipping...`);
+      logger.warn('TaskAssignment not found for comment, skipping...');
       continue;
     }
 
@@ -506,11 +508,11 @@ const seedTaskComments = async (prisma) => {
 
 // --- Main Seeding Function ---
 const seedData = async () => {
-  const clearData = process.argv.includes("--clear");
+  const clearData = process.argv.includes('--clear');
   let prisma;
 
   try {
-    logger.info("Connecting to database...");
+    logger.info('Connecting to database...');
     await connectDB();
     prisma = getPrisma();
 
@@ -529,9 +531,9 @@ const seedData = async () => {
     await seedTaskAssignments(prisma);
     await seedTaskComments(prisma);
 
-    logger.success("✅ Database seeding completed successfully!");
+    logger.success('✅ Database seeding completed successfully!');
   } catch (error) {
-    logger.error("Seeding failed:");
+    logger.error('Seeding failed:');
     logger.error(error.message);
     if (error.code) {
       logger.error(`Error code: ${error.code}`);
@@ -543,7 +545,7 @@ const seedData = async () => {
     if (prisma) {
       await disconnectDB();
     }
-    logger.info("Database connection closed.");
+    logger.info('Database connection closed.');
   }
 };
 

@@ -1,7 +1,7 @@
-const Joi = require("joi");
-const { status } = require("http-status");
-const { pick } = require("lodash");
-const ApiError = require("../utils/apiError");
+const Joi = require('joi');
+const { status } = require('http-status');
+const { pick } = require('lodash');
+const ApiError = require('../utils/apiError');
 
 /**
  * Validation middleware factory function
@@ -11,30 +11,30 @@ const ApiError = require("../utils/apiError");
  * @returns {Function} Express middleware function
  */
 const validate = (schema) => (req, res, next) => {
-  const validSchema = pick(schema, ["params", "query", "body"]);
+  const validSchema = pick(schema, ['params', 'query', 'body']);
   const object = pick(req, Object.keys(validSchema));
   const { value, error } = Joi.compile(validSchema)
-    .prefs({ errors: { label: "key" }, abortEarly: false })
+    .prefs({ errors: { label: 'key' }, abortEarly: false })
     .validate(object);
 
   if (error) {
     const errorDetails = error.details.map((err) => {
       const pathParts = err.path.slice(1);
       const field =
-        pathParts.length > 0
-          ? pathParts.join(".")
-          : err.context?.key || "unknown";
+				pathParts.length > 0
+				  ? pathParts.join('.')
+				  : err.context?.key || 'unknown';
 
       return {
         field,
-        message: err.message.replace(/['"]/g, ""),
+        message: err.message.replace(/['"]/g, ''),
         type: err.type,
       };
     });
 
-    console.log("Validation error details:", errorDetails);
+    console.log('Validation error details:', errorDetails);
 
-    const errorMessage = "validation.failed";
+    const errorMessage = 'validation.failed';
 
     return next(new ApiError(status.BAD_REQUEST, errorMessage, errorDetails));
   }

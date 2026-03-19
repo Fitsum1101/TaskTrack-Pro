@@ -1,5 +1,5 @@
-const prisma = require("../lib/prisma");
-const ApiError = require("../../../utils/apiError");
+const prisma = require('../lib/prisma');
+const ApiError = require('../../../utils/apiError');
 
 /* ======================================================
    VALIDATIONS
@@ -11,7 +11,7 @@ async function validateCompanyExists(companyId) {
   });
 
   if (!company) {
-    throw ApiError.notFound("Company not found");
+    throw ApiError.notFound('Company not found');
   }
 
   return company;
@@ -23,7 +23,7 @@ async function validateTeamExists(teamId, companyId) {
   });
 
   if (!team) {
-    throw ApiError.notFound("Team not found");
+    throw ApiError.notFound('Team not found');
   }
 
   return team;
@@ -33,7 +33,7 @@ async function validateTeamNameAvailable(companyId, name) {
   const normalized = name.trim();
 
   if (!normalized) {
-    throw ApiError.badRequest("Team name is required");
+    throw ApiError.badRequest('Team name is required');
   }
 
   const existing = await prisma.team.findFirst({
@@ -44,7 +44,7 @@ async function validateTeamNameAvailable(companyId, name) {
   });
 
   if (existing) {
-    throw ApiError.conflict("Team name already exists in this company");
+    throw ApiError.conflict('Team name already exists in this company');
   }
 
   return true;
@@ -83,11 +83,11 @@ async function deleteTeam(teamId, companyId) {
   });
 
   if (!team) {
-    throw ApiError.notFound("Team not found");
+    throw ApiError.notFound('Team not found');
   }
 
   if (team.projects.length > 0) {
-    throw ApiError.forbidden("Cannot delete team with active projects");
+    throw ApiError.forbidden('Cannot delete team with active projects');
   }
 
   return await prisma.$transaction(async (tx) => {
@@ -108,7 +108,7 @@ async function deleteTeam(teamId, companyId) {
 async function getTeamsByCompany(companyId, options = {}) {
   await validateCompanyExists(companyId);
 
-  const { page = 1, limit = 10, search = "", paginate = true } = options;
+  const { page = 1, limit = 10, search = '', paginate = true } = options;
 
   const currentPage = Number(page) > 0 ? Number(page) : 1;
   const take = Number(limit) > 0 ? Number(limit) : 10;
@@ -119,13 +119,13 @@ async function getTeamsByCompany(companyId, options = {}) {
     ...(search && {
       name: {
         contains: search,
-        mode: "insensitive",
+        mode: 'insensitive',
       },
     }),
     ...(search && {
       description: {
         contains: search,
-        mode: "insensitive",
+        mode: 'insensitive',
       },
     }),
   };
@@ -151,7 +151,7 @@ async function getTeamsByCompany(companyId, options = {}) {
           },
         },
       },
-      orderBy: { id: "desc" },
+      orderBy: { id: 'desc' },
     });
 
     return {
@@ -184,7 +184,7 @@ async function getTeamsByCompany(companyId, options = {}) {
           },
         },
       },
-      orderBy: { id: "desc" },
+      orderBy: { id: 'desc' },
     }),
     prisma.team.count({ where: whereClause }),
   ]);
