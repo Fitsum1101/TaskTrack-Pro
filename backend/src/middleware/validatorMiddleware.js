@@ -21,9 +21,9 @@ const validate = (schema) => (req, res, next) => {
     const errorDetails = error.details.map((err) => {
       const pathParts = err.path.slice(1);
       const field =
-				pathParts.length > 0
-				  ? pathParts.join('.')
-				  : err.context?.key || 'unknown';
+        pathParts.length > 0
+          ? pathParts.join('.')
+          : err.context?.key || 'unknown';
 
       return {
         field,
@@ -31,8 +31,6 @@ const validate = (schema) => (req, res, next) => {
         type: err.type,
       };
     });
-
-    console.log('Validation error details:', errorDetails);
 
     const errorMessage = 'validation.failed';
 

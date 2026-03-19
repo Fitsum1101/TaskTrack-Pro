@@ -43,17 +43,13 @@ const checkRateLimit = async (userId) => {
       const ttl = await redisClient.ttl(rateLimitKey);
       const resetTime = new Date(Date.now() + ttl * 1000);
 
-      throw new ApiError(
-        429,
-        'Daily rate limit exceeded for smart sourcing',
-        {
-          currentUsage: count,
-          dailyLimit: DAILY_LIMIT,
-          remainingRequests: 0,
-          resetTime: resetTime.toISOString(),
-          retryAfter: ttl,
-        }
-      );
+      throw new ApiError(429, 'Daily rate limit exceeded for smart sourcing', {
+        currentUsage: count,
+        dailyLimit: DAILY_LIMIT,
+        remainingRequests: 0,
+        resetTime: resetTime.toISOString(),
+        retryAfter: ttl,
+      });
     }
 
     return {
@@ -102,17 +98,13 @@ const incrementRateLimit = async (userId) => {
       const ttl = await redisClient.ttl(rateLimitKey);
       const resetTime = new Date(Date.now() + ttl * 1000);
 
-      throw new ApiError(
-        429,
-        'Daily rate limit exceeded for smart sourcing',
-        {
-          currentUsage: newCount,
-          dailyLimit: DAILY_LIMIT,
-          remainingRequests: 0,
-          resetTime: resetTime.toISOString(),
-          retryAfter: ttl,
-        }
-      );
+      throw new ApiError(429, 'Daily rate limit exceeded for smart sourcing', {
+        currentUsage: newCount,
+        dailyLimit: DAILY_LIMIT,
+        remainingRequests: 0,
+        resetTime: resetTime.toISOString(),
+        retryAfter: ttl,
+      });
     }
 
     return {

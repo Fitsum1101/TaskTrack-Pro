@@ -11,9 +11,9 @@ const { prisma } = require('../config/db');
 function extractToken(req) {
   return (
     req.cookies?.token ||
-		req.headers['authorization']?.replace('Bearer ', '') ||
-		req.headers['x-access-token'] ||
-		null
+    req.headers['authorization']?.replace('Bearer ', '') ||
+    req.headers['x-access-token'] ||
+    null
   );
 }
 

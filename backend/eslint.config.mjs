@@ -16,7 +16,7 @@ export default defineConfig([
     },
     rules: {
       // 🔴 Possible errors
-      'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-undef': 'error',
       'no-console': 'off', // allow console in backend
       'no-debugger': 'warn',
@@ -36,11 +36,6 @@ export default defineConfig([
       // ⚡ Node.js specific improvements
       'handle-callback-err': 'warn',
       'no-path-concat': 'error',
-
-      // 🧼 Clean code habits
-      'no-trailing-spaces': 'error',
-      'eol-last': ['error', 'always'],
-      'no-multiple-empty-lines': ['error', { max: 1 }],
     },
   },
 

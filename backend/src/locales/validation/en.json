@@ -1,8 +1,0 @@
-{
-	"global": {
-		"validation": {
-			"required": "This field is required",
-			"invalid": "Invalid value"
-		}
-	}
-}

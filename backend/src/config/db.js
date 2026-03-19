@@ -15,9 +15,9 @@ const adapter = new PrismaMariaDb({
 const prisma = new PrismaClient({
   adapter,
   log:
-		process.env.NODE_ENV === 'development'
-		  ? ['query', 'error', 'warn']
-		  : ['error'],
+    process.env.NODE_ENV === 'development'
+      ? ['query', 'error', 'warn']
+      : ['error'],
 });
 
 let isConnected = false;

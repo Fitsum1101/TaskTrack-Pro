@@ -1,6 +1,5 @@
 // dev/scripts/seed_migrateDB.js
 
-const systemAdminData = require('./data/systemAdminData');
 const companyData = require('./data/companyData');
 const usersData = require('./data/usersData');
 const teamsData = require('./data/teamsData');
@@ -335,9 +334,7 @@ const seedModules = async (prisma) => {
     });
 
     if (!project) {
-      logger.warn(
-        `Project not found for module ${module.name}, skipping...`
-      );
+      logger.warn(`Project not found for module ${module.name}, skipping...`);
       continue;
     }
 

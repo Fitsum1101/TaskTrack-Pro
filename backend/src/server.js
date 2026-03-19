@@ -29,7 +29,7 @@ const startServer = async () => {
     console.log('🔗 Connecting to MySQL database...');
 
     // Connect to database first
-    const prisma = await connectDB();
+    await connectDB();
 
     console.log('✅ Connected to MySQL database');
 
@@ -44,12 +44,8 @@ const startServer = async () => {
 
     server
       .listen(PORT, () => {
-        console.log(
-          `🚀 Server is running on port http://localhost:${PORT}`
-        );
-        console.log(
-          `📊 Environment: ${process.env.NODE_ENV || 'development'}`
-        );
+        console.log(`🚀 Server is running on port http://localhost:${PORT}`);
+        console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
       })
       .on('error', (error) => {
         console.error('❌ Server failed to start:', error);
