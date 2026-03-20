@@ -1,45 +1,46 @@
-import axios from "axios";
+import axios from 'axios';
 
-import { ACCESS_TOKEN } from "@/constant/variables";
-import { VITE_BASE_URL } from "./secreate";
+import { VITE_BASE_URL } from './secreate';
+
+import { ACCESS_TOKEN } from '@/constant/variables';
 
 const axiosInstance = axios.create({
-  baseURL: VITE_BASE_URL,
-  timeout: 10000,
-  headers: { "X-Custom-Header": "foobar" },
+	baseURL: VITE_BASE_URL,
+	timeout: 10000,
+	headers: { 'X-Custom-Header': 'foobar' },
 });
 
 // Add a request interceptor
 axiosInstance.interceptors.request.use(function (config) {
-  // 👉 If request contains FormData, set multipart header
-  if (config.data instanceof FormData) {
-    config.headers?.set("Content-Type", "multipart/form-data");
-  } else {
-    config.headers?.set("Content-Type", "application/json");
-    config.headers?.set("Accept", "application/json");
-  }
-  // add token to header
-  const token = localStorage.getItem(ACCESS_TOKEN);
-  if (token) {
-    config.headers?.set("Authorization", `Bearer ${token}`);
-  }
-  // Do something before request is sent
-  return config;
+	// 👉 If request contains FormData, set multipart header
+	if (config.data instanceof FormData) {
+		config.headers?.set('Content-Type', 'multipart/form-data');
+	} else {
+		config.headers?.set('Content-Type', 'application/json');
+		config.headers?.set('Accept', 'application/json');
+	}
+	// add token to header
+	const token = localStorage.getItem(ACCESS_TOKEN);
+	if (token) {
+		config.headers?.set('Authorization', `Bearer ${token}`);
+	}
+	// Do something before request is sent
+	return config;
 });
 
 axiosInstance.interceptors.response.use(undefined, async (error) => {
-  console.error("Axios error:", error);
-  if (error.response?.status === 401) {
-    await refreshToken();
-    return axiosInstance(error.config);
-  }
+	console.error('Axios error:', error);
+	if (error.response?.status === 401) {
+		await refreshToken();
+		return axiosInstance(error.config);
+	}
 
-  throw error;
+	throw error;
 });
 
 // Refresh token logic
 const refreshToken = async () => {
-  // Perform refresh token logic here
+	// Perform refresh token logic here
 };
 
 export default axiosInstance;

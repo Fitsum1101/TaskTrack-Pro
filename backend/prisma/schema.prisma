@@ -45,7 +45,7 @@ model Company {
   approvedAt DateTime?
 
   // Relations
-  users         User[]
+  employee      Employee[]
   teams         Team[]
   employeePosition         EmployeePosition[]
   projects      Project[]
@@ -53,7 +53,7 @@ model Company {
   AuthToken      AuthToken[]
 }
 
-model User {
+model Employee {
   id            String          @id @default(uuid())
   companyId     String
   first_name    String
@@ -96,15 +96,15 @@ model EmployeePosition {
 
 model EmployeePositionAssignment {
   id         String       @id @default(uuid())
-  userId     String
+  employeeId     String
   positionId String
   assignedAt DateTime  @default(now())
 
   // Relations
-  user     User             @relation(fields: [userId], references: [id])
+  employee     Employee             @relation(fields: [employeeId], references: [id])
   position EmployeePosition @relation(fields: [positionId], references: [id])
 
-  @@unique([userId, positionId])
+  @@unique([employeeId, positionId])
 }
 
 model Team {
@@ -127,14 +127,14 @@ model Team {
 model TeamMembers {
   id       String   @id @default(uuid())
   teamId  String
-  userId   String
+  employeeId   String
   joinedAt DateTime @default(now())
  
   team            Team @relation(fields: [teamId], references: [id])
-  user            User  @relation(fields: [userId], references: [id])
+  employee            Employee  @relation(fields: [employeeId], references: [id])
   taskAssignment  TaskAssignment[]     
 
-  @@unique([teamId, userId])
+  @@unique([teamId, employeeId])
 }
 
 model Project {
@@ -190,8 +190,8 @@ model Task {
   completedAt      DateTime?
 
   // Relations
-  module    Module  @relation(fields: [moduleId], references: [id])
-  assignedBy       User       @relation("TaskCreated", fields: [assignedById], references: [id])
+  module           Module  @relation(fields: [moduleId], references: [id])
+  assignedBy       Employee       @relation("TaskCreated", fields: [assignedById], references: [id])
   assignments      TaskAssignment[] // NEW: multiple team members
   attachments      Attachment[]
   @@unique([moduleId,title])
@@ -235,12 +235,12 @@ model Attachment {
   createdAt DateTime @default(now())
 
   task Task @relation(fields: [taskId], references: [id])
-  user User @relation(fields: [uploadedBy], references: [id])
+  employee Employee @relation(fields: [uploadedBy], references: [id])
 }
 
 model AuthToken {
   id        String       @id @default(uuid())
-  userId    String
+  employeeId    String
   companyId String?
   tokenHash String
   type      TokenType
@@ -251,14 +251,14 @@ model AuthToken {
   userAgent String?
   createdAt DateTime  @default(now())
 
-  user    User    @relation(fields: [userId], references: [id])
+  employee    Employee    @relation(fields: [employeeId], references: [id])
   company Company? @relation(fields: [companyId], references: [id])
 }
 
 model ActivityLog {
   id          String      @id @default(uuid())
   companyId   String
-  userId      String
+  employeeId      String
   action      String
   entityType  String
   entityId    String?
@@ -266,19 +266,19 @@ model ActivityLog {
   createdAt   DateTime @default(now())
 
   company Company @relation(fields: [companyId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
+  employee    Employee    @relation(fields: [employeeId], references: [id])
 }
 
 model Notification {
   id        String      @id @default(uuid())
-  userId    String
+  employeeId    String
   title     String
   message   String
   type      String
   isRead    Boolean  @default(false)
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
 }
 
 

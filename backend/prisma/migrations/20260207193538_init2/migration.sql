@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `systemadmin` ADD COLUMN `role` VARCHAR(191) NOT NULL DEFAULT 'SYSTEM_ADMIN';

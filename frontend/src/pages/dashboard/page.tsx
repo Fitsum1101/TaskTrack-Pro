@@ -1,43 +1,32 @@
-import { Navbar } from "@/components/custom/navbar";
-import Sidebar from "@/components/custom/sidbar/SideBar";
-import {
-  BarChart3,
-  CheckSquare,
-  FolderOpen,
-  LayoutDashboard,
-  Settings,
-  Users,
-} from "lucide-react";
-import { useState } from "react";
-import { Outlet } from "react-router";
+import { useState } from 'react';
+import { Outlet } from 'react-router';
 
-const sidebarItems = [
-  { icon: LayoutDashboard, name: "Dashboard", href: "/dashboard" },
-  { icon: FolderOpen, name: "Projects", href: "projects" },
-  { icon: CheckSquare, name: "Tasks", href: "#" },
-  { icon: Users, name: "Teams", href: "teams" },
-  { icon: BarChart3, name: "Reports", href: "#" },
-  { icon: Settings, name: "Settings", href: "#" },
-];
+import { sidebarItems } from './constant/sidbar';
+
+import { Navbar } from '@/components/custom/navbar';
+import Sidebar from '@/components/custom/sidbar/SideBar';
 
 const DashboardPage = () => {
-  const [openSidbar, setOpenSidbar] = useState(true);
-  return (
-    <div className="flex h-[calc(100vh-67px)] bg-background">
-      <Sidebar
-        isOpen={openSidbar}
-        onToggle={() => setOpenSidbar(!openSidbar)}
-        navigation={sidebarItems}
-      />
-      <div className="flex flex-1 flex-col overflow-y-scroll">
-        <main className="flex-1 overflow-auto bg-background p-6">
-          <div className="mx-auto max-w-7xl">
-            <Outlet />
-          </div>
-        </main>
-      </div>
-    </div>
-  );
+	const [openSidbar, setOpenSidbar] = useState(true);
+	return (
+		<div className="h-screen flex flex-col overflow-hidden">
+			<Navbar onSidebarToggle={() => {}} />
+			<div className="flex flex-1 overflow-hidden">
+				<Sidebar
+					isOpen={openSidbar}
+					onToggle={() => setOpenSidbar(!openSidbar)}
+					navigation={sidebarItems}
+				/>
+				<div className="flex-1 overflow-y-auto scrollbar-hide ">
+					<main className="p-6">
+						<div className="mx-auto max-w-7xl">
+							<Outlet />
+						</div>
+					</main>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default DashboardPage;

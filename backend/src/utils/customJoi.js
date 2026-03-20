@@ -43,10 +43,15 @@ const email = () => {
   return Joi.string().email().lowercase();
 };
 
+const url = () => {
+  return Joi.string().lowercase();
+};
+
 module.exports = {
   id,
   password,
   username,
   phoneNumber,
   email,
+  url,
 };

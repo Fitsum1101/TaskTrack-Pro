@@ -1,8 +1,9 @@
 export const safeJSONParse = (data: string | null) => {
-  try {
-    return data ? JSON.parse(data) : null;
-  } catch (error) {
-    console.warn("Invalid JSON in storage:", data);
-    return null;
-  }
+	try {
+		return data ? JSON.parse(data) : null;
+	} catch (error) {
+		console.log(error);
+		console.warn('Invalid JSON in storage:', data);
+		return null;
+	}
 };

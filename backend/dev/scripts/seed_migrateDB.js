@@ -1,7 +1,7 @@
 // dev/scripts/seed_migrateDB.js
 
 const companyData = require('./data/companyData');
-const usersData = require('./data/usersData');
+const employeeData = require('./data/employeeData');
 const teamsData = require('./data/teamsData');
 const projectsData = require('./data/projectsData');
 const tasksData = require('./data/tasksData');
@@ -34,7 +34,7 @@ const clearDatabase = async (prisma) => {
     'Project',
     'TeamMember',
     'Team',
-    'User',
+    'employee',
     'Company',
     'SystemAdmin',
   ];
@@ -80,40 +80,42 @@ const seedCompanyData = async (prisma) => {
   logger.success(`Seeded ${companyData.length} companies`);
 };
 
-const seedUsers = async (prisma) => {
-  logger.info('Seeding users...');
+const seedemployees = async (prisma) => {
+  logger.info('Seeding employees...');
 
-  for (const user of usersData) {
-    let hashedPassword = await bcrypt.hash(user.password, 12);
+  for (const employee of employeeData) {
+    let hashedPassword = await bcrypt.hash(employee.password, 12);
 
     let companyId = await prisma.company.findUnique({
-      where: { name: companyData[user.companyIndex].name },
+      where: { name: companyData[employee.companyIndex].name },
     });
 
     if (!companyId) {
-      logger.warn(`Company not found for user ${user.email}, skipping...`);
+      logger.warn(
+        `Company not found for employee ${employee.email}, skipping...`
+      );
       continue;
     }
 
-    await prisma.user.upsert({
-      where: { email: user.email },
+    await prisma.employee.upsert({
+      where: { email: employee.email },
       update: {
         password_hash: hashedPassword,
         companyId: companyId.id,
       },
       create: {
-        email: user.email,
-        first_name: user.firstName,
-        last_name: user.lastName,
+        email: employee.email,
+        first_name: employee.firstName,
+        last_name: employee.lastName,
         password_hash: hashedPassword,
-        is_active: user.isActive,
-        role_type: user.role,
+        is_active: employee.isActive,
+        role_type: employee.role,
         companyId: companyId.id,
       },
     });
   }
 
-  logger.success(`Seeded ${usersData.length} users`);
+  logger.success(`Seeded ${employeeData.length} employees`);
 };
 
 const seedEmployeePositions = async (prisma) => {
@@ -161,14 +163,14 @@ const seedEmployeePositionAssignments = async (prisma) => {
   logger.info('Seeding employee position assignments...');
 
   for (const item of employeePostionAssignment) {
-    const user = await prisma.user.findUnique({
+    const employee = await prisma.employee.findUnique({
       where: {
-        email: usersData[item.userIndex].email,
+        email: employeeData[item.userIndex].email,
       },
     });
 
-    if (!user) {
-      logger.warn('User not found, skipping assignment...');
+    if (!employee) {
+      logger.warn('employee not found, skipping assignment...');
       continue;
     }
 
@@ -185,8 +187,8 @@ const seedEmployeePositionAssignments = async (prisma) => {
 
     await prisma.employeePositionAssignment.upsert({
       where: {
-        userId_positionId: {
-          userId: user.id,
+        employeeId_positionId: {
+          employeeId: employee.id,
           positionId: position.id,
         },
       },
@@ -194,7 +196,7 @@ const seedEmployeePositionAssignments = async (prisma) => {
         assignedAt: new Date(),
       },
       create: {
-        userId: user.id,
+        employeeId: employee.id,
         positionId: position.id,
         assignedAt: new Date(),
       },
@@ -251,25 +253,27 @@ const seedTeamMembersData = async (prisma) => {
       },
     });
 
-    const user = await prisma.user.findUnique({
+    const employee = await prisma.employee.findUnique({
       where: {
-        email: usersData.find((user) => user.user === tm.user).email,
+        email: employeeData.find(
+          (employee) => employee.employee === tm.username
+        ).email,
       },
     });
 
     await prisma.teamMembers.upsert({
       where: {
-        teamId_userId: {
+        teamId_employeeId: {
           teamId: team.id,
-          userId: user.id,
+          employeeId: employee.id,
         },
       },
       update: {
-        userId: user.id,
+        employeeId: employee.id,
         teamId: team.id,
       },
       create: {
-        userId: user.id,
+        employeeId: employee.id,
         teamId: team.id,
       },
     });
@@ -290,10 +294,10 @@ const seedProjectsData = async (prisma) => {
       },
     });
 
-    const manager = await prisma.user.findUnique({
+    const manager = await prisma.employee.findUnique({
       where: {
-        email: usersData.find(
-          (user) => user.username === project.createdByUsername
+        email: employeeData.find(
+          (employee) => employee.username === project.createdByemployeename
         ).email,
       },
     });
@@ -377,14 +381,14 @@ const seedTasks = async (prisma) => {
       continue;
     }
 
-    const user = await prisma.user.findUnique({
+    const employee = await prisma.employee.findUnique({
       where: {
-        email: usersData[task.assignedByIndex].email,
+        email: employeeData[task.assignedByIndex].email,
       },
     });
 
-    if (!user) {
-      logger.warn(`User not found for task ${task.title}, skipping...`);
+    if (!employee) {
+      logger.warn(`employee not found for task ${task.title}, skipping...`);
       continue;
     }
 
@@ -409,7 +413,7 @@ const seedTasks = async (prisma) => {
         moduleId: module.id,
         title: task.title,
         description: task.description,
-        assignedById: user.id,
+        assignedById: employee.id,
         status: task.status || 'TODO',
         priority: task.priority || 'MEDIUM',
         dueDate: task.dueDate || null,
@@ -442,7 +446,7 @@ const seedTaskAssignments = async (prisma) => {
 
     const teamMember = await prisma.teamMembers.findFirst({
       where: {
-        userId: teamMembersData[item.teamMemberIndex].userId, // depends on your seed
+        employeeId: teamMembersData[item.teamMemberIndex].employeeId, // depends on your seed
       },
     });
 
@@ -517,7 +521,7 @@ const seedData = async () => {
       await clearDatabase(prisma);
     }
     await seedCompanyData(prisma);
-    await seedUsers(prisma);
+    await seedemployees(prisma);
     await seedEmployeePositions(prisma);
     await seedEmployeePositionAssignments(prisma);
     await seedTeamsData(prisma);

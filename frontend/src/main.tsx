@@ -1,32 +1,29 @@
-import { createRoot } from "react-dom/client";
-import "./index.css";
-import App from "./App.tsx";
-import { Provider } from "react-redux";
-import { store } from "./store/app.ts";
-import { BrowserRouter, Route, Routes } from "react-router";
+import { createRoot } from 'react-dom/client';
 
-import LoginPage from "./pages/auth/login/page.tsx";
-import { AuthProvider } from "./contexts/auth-context.tsx";
-import DashboardPage from "./pages/dashboard/page.tsx";
-import TeamsPage from "./pages/dashboard/teams/page.tsx";
-import { Toaster } from "sonner";
+import './index.css';
+// import { Provider } from 'react-redux';
+// import { BrowserRouter, Route, Routes } from 'react-router';
+// import { Toaster } from 'sonner';
 
-createRoot(document.getElementById("root")!).render(
-  <>
-    <Provider store={store}>
-      <AuthProvider>
-        <Toaster />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<App />}>
-              <Route index element={<LoginPage />} />
-              <Route path="dashboard" element={<DashboardPage />}>
-                <Route path="teams" element={<TeamsPage />} />
-              </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </Provider>
-  </>,
+import App from './App.tsx';
+// import EmployeePage from './pages/dashboard/employee/EmployeePage.tsx';
+// import DashboardPage from './pages/dashboard/page.tsx';
+// import { store } from './store/app.ts';
+
+createRoot(document.getElementById('root')!).render(
+	<>
+		{/* <Provider store={store}>
+			<Toaster />
+			<BrowserRouter>
+				<Routes>
+					<Route path="/" element={<App />}>
+						<Route path="/" element={<DashboardPage />}>
+							<Route path="employees" element={<EmployeePage />} />
+						</Route>
+					</Route>
+				</Routes>
+			</BrowserRouter>
+		</Provider> */}
+		<App />
+	</>
 );
